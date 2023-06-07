@@ -38,12 +38,12 @@ prev = System.monotonic_time()
 
 a=GPotion.new_gmatrex(mat1)
 b=GPotion.new_gmatrex(mat2)
-c=GPotion.new_gmatrex(m*k)
+c=GPotion.new_gmatrex(1,m*k)
 
 GPotion.spawn(ker,{grid_rows,grid_cols,1},{block_size,block_size,1},[a,b,c,m,n,k])
 GPotion.synchronize()
 
-result = GPotion.get_matrex(c)
+result = GPotion.get_gmatrex(c)
 
 next = System.monotonic_time()
 IO.puts "time gpu #{System.convert_time_unit(next-prev,:native,:millisecond)}"
