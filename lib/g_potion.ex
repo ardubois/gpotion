@@ -143,8 +143,6 @@ def load(kernel) do
               "c_src/#{kernelname}.cu"
               ], stderr_to_stdout: true)
               #IO.puts(result)
-              IO.inspect kernelname
-              raise :hell
               GPotion.load_kernel_nif(to_string(kernelname))
 
     _ -> raise "GPotion.build: invalid kernel"
