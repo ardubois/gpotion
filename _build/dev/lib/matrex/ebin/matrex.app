@@ -1,0 +1,12 @@
+{application,matrex,
+             [{applications,[kernel,stdlib,elixir]},
+              {description,"Blazing fast matrix library for Elixir/Erlang with native C implementation using CBLAS."},
+              {modules,['Elixir.Enumerable.Matrex','Elixir.Inspect.Matrex',
+                        'Elixir.Matrex','Elixir.Matrex.Algorithms',
+                        'Elixir.Matrex.Algorithms.FMinCG',
+                        'Elixir.Matrex.Dashboard','Elixir.Matrex.Guards',
+                        'Elixir.Matrex.IDX','Elixir.Matrex.Inspect',
+                        'Elixir.Matrex.MagicSquare','Elixir.Matrex.NIFs',
+                        'Elixir.Matrex.Operators','Elixir.Matrex.Threaded']},
+              {registered,[]},
+              {vsn,"0.6.8"}]}.
