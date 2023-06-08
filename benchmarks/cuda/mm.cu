@@ -58,19 +58,24 @@ int main(int argc, char const *argv[])
     float *b = (float*) malloc(m*m*sizeof(float));
     float *c = (float*) malloc(m*m*sizeof(float));
     float *cpu_result = (float*) malloc(m*m*sizeof(float));
+    
+    srand(time(0));
 
     for (int i = 0; i < m; ++i) {
         for (int j = 0; j < m; ++j) {
-            a[i * m + j] = 2.0;
+            a[i * m + j] =  (rand() %(100 -1 + 1)) + 1;
         }
     }
 
     for (int i = 0; i < m; ++i) {
         for (int j = 0; j < m; ++j) {
-            b[i * m + j] = 3.0;
+            b[i * m + j] = (rand() %(100 -1 + 1)) + 1;
         }
     }
 
+
+    //for (int i=0;i<m;i++)
+    //    printf("v %f\n",b[10]);
     float *d_a, *d_b, *d_c;
 
     int grid_rows = (m + block_size - 1) / block_size;
@@ -98,8 +103,7 @@ int main(int argc, char const *argv[])
     cudaMemcpy(d_b, b, sizeof(float)*m*m, cudaMemcpyHostToDevice);
      j_error = cudaGetLastError();
     if(j_error != cudaSuccess) printf("Error 5: %s\n", cudaGetErrorString(j_error));
-    enddt1 = clock();
-
+    
     
     gpu_mm<<<dimGrid, dimBlock>>>(d_a, d_b, d_c, m,m,m);  
    
@@ -112,7 +116,7 @@ int main(int argc, char const *argv[])
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 
-    printf ("cuda   %m   %f \n",
+    printf ("cuda   %d   %f \n",m,
             ((end.tv_nsec - begin.tv_nsec) / 1000000000.0 +
             (end.tv_sec  - begin.tv_sec))*1000);
    
