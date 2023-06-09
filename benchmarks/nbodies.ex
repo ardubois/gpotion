@@ -54,7 +54,7 @@ def calc_nbodies(j,i,p,softening,fx,fy,fz) do
     fz = fz + dz * invDist3;
     calc_nbodies(j-1,i,p,softening,fx,fy,fz)
 end
-kernel gpu_integrate(p, dt, n,[:matrex,:float,:int]) do
+gpotion gpu_integrate(p, dt, n,[:matrex,:float,:int]) do
   var i int  = blockDim.x * blockIdx.x + threadIdx.x;
   if (i < n) do
     p[6*i] = p[6*i] + p[6*i+3]*dt;
