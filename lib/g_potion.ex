@@ -89,6 +89,15 @@ defmodule GPotion do
    para = para
     |> Enum.map(fn {p, b, c}-> {String.to_atom("_" <> to_string(p)),b,c} end)
 
+  {_result, _errcode} = System.cmd("nvcc",
+  ["--shared",
+  "--compiler-options",
+  "'-fPIC'",
+  "-o",
+  "priv/#{fname}.so",
+  "c_src/#{fname}.cu"
+  ], stderr_to_stdout: true)
+
    quote do
       def unquote({fname,comp_info, para})do
         raise "A kernel can only be executed with GPotion.spawn"
@@ -134,14 +143,7 @@ def load(kernel) do
   case Macro.escape(kernel) do
     {:&, [],[{:/, [], [{{:., [], [_module, kernelname]}, [no_parens: true], []}, _nargs]}]} ->
 
-          {_result, _errcode} = System.cmd("nvcc",
-              ["--shared",
-              "--compiler-options",
-              "'-fPIC'",
-              "-o",
-              "priv/#{kernelname}.so",
-              "c_src/#{kernelname}.cu"
-              ], stderr_to_stdout: true)
+
               #IO.puts(result)
               GPotion.load_kernel_nif(to_charlist(kernelname))
 
