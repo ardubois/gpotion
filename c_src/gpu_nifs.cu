@@ -195,6 +195,14 @@ static ERL_NIF_TERM load_kernel_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM
   //strcpy(func_name, "print");
   
   void * m_handle = dlopen(lib_name, RTLD_NOW);
+  if(m_handle!= NULL)  
+      { char message[200];
+        strcpy(message,"Error opening dll!! ");
+        enif_raise_exception(env,enif_make_string(env, message, ERL_NIF_LATIN1));
+      }
+
+
+
   void (*fn)();
   fn= (void (*)())dlsym( m_handle, func_name);
   
