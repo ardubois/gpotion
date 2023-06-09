@@ -4,7 +4,7 @@ __global__ void gpu_mm(float *a,float *b, float *c, int m, int n, int k)
 { 
     int row = blockIdx.y * blockDim.y + threadIdx.y; 
     int col = blockIdx.x * blockDim.x + threadIdx.x;
-    int sum = 0;
+    float sum = 0;
     if( col < k && row < m) 
     {
         for(int i = 0; i < n; i++) 
@@ -45,7 +45,7 @@ void checkElementsAre(float *gpu, float *cpu, int N)
 
 int main(int argc, char const *argv[])
 {   
-    struct timespec begin, end;
+    
     int value = atoi(argv[1]);
     
     
@@ -83,8 +83,15 @@ int main(int argc, char const *argv[])
     dim3 dimGrid(grid_cols, grid_rows);
     dim3 dimBlock(block_size, block_size);
    
-    
-    clock_gettime(CLOCK_MONOTONIC_RAW, &begin);
+   //struct timespec begin, end;
+   //clock_gettime(CLOCK_MONOTONIC, &begin);
+
+   float time;
+    cudaEvent_t start, stop;   
+     cudaEventCreate(&start) ;
+    cudaEventCreate(&stop) ;
+    cudaEventRecord(start, 0) ;
+
     
     cudaMalloc((void **) &d_a, sizeof(float)*m*m);
      j_error = cudaGetLastError();
@@ -118,11 +125,17 @@ int main(int argc, char const *argv[])
     j_error = cudaGetLastError();
     if(j_error != cudaSuccess) printf("Error 7: %s\n", cudaGetErrorString(j_error));
 
-    clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+    cudaEventRecord(stop, 0) ;
+cudaEventSynchronize(stop) ;
+cudaEventElapsedTime(&time, start, stop) ;
 
-    printf ("cuda   %d   %f \n",m,
-            ((end.tv_nsec - begin.tv_nsec) / 1000000000.0 +
-            (end.tv_sec  - begin.tv_sec))*1000);
+printf("gpotion\t%d\t%3.1f ms \n", m,time);
+
+    //clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+
+    //printf ("cuda   %d   %f \n",m,
+     //       ((end.tv_nsec - begin.tv_nsec) / 1000000000.0 +
+       //     (end.tv_sec  - begin.tv_sec))*1000);
    
 //    cpu_mm(a,b,cpu_result,m,m,m);
   
