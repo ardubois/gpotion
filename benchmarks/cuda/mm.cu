@@ -109,6 +109,10 @@ int main(int argc, char const *argv[])
    
     j_error = cudaGetLastError();
     if(j_error != cudaSuccess) printf("Error 6: %s\n", cudaGetErrorString(j_error));
+    
+    cudaDeviceSynchronize();
+     j_error = cudaGetLastError();
+    if(j_error != cudaSuccess) printf("Synchronize: %s\n", cudaGetErrorString(j_error));
 
     cudaMemcpy(c, d_c, sizeof(float)*m*m, cudaMemcpyDeviceToHost);
     j_error = cudaGetLastError();
