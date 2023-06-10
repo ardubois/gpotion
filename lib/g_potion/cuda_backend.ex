@@ -180,7 +180,7 @@ def types_server(used,types, is_typed) do
     {:kill} ->
       :ok
     end
-    IO.puts "dead"
+
   end
 end
 
