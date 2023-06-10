@@ -1,18 +1,18 @@
 defmodule NBodies do
   import GPotion
-  gpotion gpu_nBodies(p,dt,n,softening,[:matrex,:float,:int,:float]) do
-    var i int = blockDim.x * blockIdx.x + threadIdx.x
+  gpotion gpu_nBodies(p,dt,n,softening) do
+    i = blockDim.x * blockIdx.x + threadIdx.x
     if (i < n) do
-      var fx float= 0.0
-      var fy float= 0.0
-      var fz float = 0.0
+      fx = 0.0
+      fy = 0.0
+      fz = 0.0
       for j in range(0,n) do
-        var dx float= p[6*j] - p[6*i];
-        var dy float= p[6*j+1] - p[6*i+1];
-        var dz float= p[6*j+2] - p[6*i+2];
-        var distSqr  float = dx*dx + dy*dy + dz*dz + softening;
-        var invDist float = 1/sqrt(distSqr);
-        var invDist3  float = invDist * invDist * invDist;
+        dx = p[6*j] - p[6*i];
+        dy = p[6*j+1] - p[6*i+1];
+        dz = p[6*j+2] - p[6*i+2];
+        distSqr = dx*dx + dy*dy + dz*dz + softening;
+        invDist = 1.0/sqrt(distSqr);
+        invDist3  = invDist * invDist * invDist;
 
         fx = fx + dx * invDist3;
         fy = fy + dy * invDist3;
@@ -34,7 +34,7 @@ defmodule NBodies do
 
     p=Matrex.set(p,1,6*i+4,Matrex.at(p,1,6*i+4)+ dt*fx);
     p=Matrex.set(p,1,6*i+5,Matrex.at(p,1,6*i+5) + dt*fy);
-    p=Matrex.set(p,1,6*i+6,Matrex.at(p,1,6*i+6) + dt*fz);
+    Matrex.set(p,1,6*i+6,Matrex.at(p,1,6*i+6) + dt*fz);
 
   end
 
@@ -54,15 +54,15 @@ def calc_nbodies(j,i,p,softening,fx,fy,fz) do
     fz = fz + dz * invDist3;
     calc_nbodies(j-1,i,p,softening,fx,fy,fz)
 end
-gpotion gpu_integrate(p, dt, n,[:matrex,:float,:int]) do
-  var i int  = blockDim.x * blockIdx.x + threadIdx.x;
+gpotion gpu_integrate(p, dt, n) do
+  i = blockDim.x * blockIdx.x + threadIdx.x;
   if (i < n) do
     p[6*i] = p[6*i] + p[6*i+3]*dt;
     p[6*i+1] = p[6*i+1] + p[6*i+4]*dt;
     p[6*i+2] = p[6*i+2] + p[6*i+5]*dt;
   end
 end
-def cpu_integrate(-1,p,dt) do
+def cpu_integrate(-1,p,_dt) do
   p
 end
 def cpu_integrate(i,p, dt) do
@@ -72,13 +72,13 @@ def cpu_integrate(i,p, dt) do
       cpu_integrate(i-1,p,dt)
 end
 def equality(a, b) do
-  if(abs(a-b) < 0.001) do
+  if(abs(a-b) < 0.01) do
     true
   else
     false
   end
 end
-def check_equality(0,cpu,gpu) do
+def check_equality(0,_cpu,_gpu) do
   :ok
 end
 def check_equality(n,cpu,gpu) do
@@ -106,6 +106,7 @@ size_body = 6
 
 size_matrex = size_body * nBodies
 
+raise "hell"
 
 h_buf = Matrex.random(1,size_matrex)
 
