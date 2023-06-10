@@ -106,7 +106,6 @@ size_body = 6
 
 size_matrex = size_body * nBodies
 
-raise "hell"
 
 h_buf = Matrex.random(1,size_matrex)
 
