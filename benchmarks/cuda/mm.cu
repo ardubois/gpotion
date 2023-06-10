@@ -126,10 +126,10 @@ int main(int argc, char const *argv[])
     if(j_error != cudaSuccess) printf("Error 7: %s\n", cudaGetErrorString(j_error));
 
     cudaEventRecord(stop, 0) ;
-cudaEventSynchronize(stop) ;
-cudaEventElapsedTime(&time, start, stop) ;
+    cudaEventSynchronize(stop) ;
+    cudaEventElapsedTime(&time, start, stop) ;
 
-printf("gpotion\t%d\t%3.1f ms \n", m,time);
+    printf("cuda\t%d\t%3.1f\n", m,time);
 
     //clock_gettime(CLOCK_MONOTONIC_RAW, &end);
 
