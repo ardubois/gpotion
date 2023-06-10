@@ -123,7 +123,7 @@ d_buf =GPotion.new_gmatrex(h_buf)
 GPotion.spawn(ker1,{nBlocks,1,1},{block_size,1,1},[d_buf,dt,nBodies,softening])
 GPotion.synchronize()
 GPotion.spawn(ker2,{nBlocks,1,1},{block_size,1,1},[d_buf,dt,nBodies])
-gpu_resp = GPotion.get_matrex(d_buf)
+gpu_resp = GPotion.get_gmatrex(d_buf)
 next = System.monotonic_time()
 IO.puts "gpotion\t#{user_value}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
