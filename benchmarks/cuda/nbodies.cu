@@ -107,9 +107,9 @@ bool Equality(float a, float b)
 }
 int main(const int argc, const char** argv) {
   
-  int value = atoi(argv[1]);
+  int user_value = atoi(argv[1]);
 
-  int nBodies = value;
+  int nBodies = user_value;
   int block_size =  128;
   float softening = 0.000000001;
   cudaError_t nb_error;
@@ -174,7 +174,7 @@ int main(const int argc, const char** argv) {
     cudaEventSynchronize(stop) ;
     cudaEventElapsedTime(&time, start, stop) ;
 
-    printf("cuda\t%d\t%3.1f\n", m,time);
+    printf("cuda\t%d\t%3.1f\n", nBodies,time);
 
     /*
     begin = clock();
