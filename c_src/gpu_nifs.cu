@@ -194,7 +194,7 @@ static ERL_NIF_TERM load_kernel_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM
 
   //strcpy(func_name, "print");
 
-  printf("libname %s\n",lib_name);
+ // printf("libname %s\n",lib_name);
   
   void * m_handle = dlopen(lib_name, RTLD_NOW);
   if(m_handle== NULL)  
