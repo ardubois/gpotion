@@ -6,7 +6,7 @@ defmodule GPotion.CudaBackend do
     pid = spawn_link(fn -> types_server([],types,is_typed) end)
     Process.register(pid, :types_server)
     code = gen_body(body)
-    send(pid,:kill)
+    send(pid,{:kill})
     code
   end
   def gen_body(body) do
