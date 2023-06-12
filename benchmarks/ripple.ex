@@ -52,7 +52,7 @@ end
 [arg] = System.argv()
 
 user_value = String.to_integer(arg)
-dim =user_balue #300
+dim =user_value #300
 
 mat = Matrex.fill(1,dim*dim*4,0)
 
