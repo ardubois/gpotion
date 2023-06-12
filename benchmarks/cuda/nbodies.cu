@@ -24,7 +24,7 @@ void bodyForce(Body *p, float dt, int n,float softening) {
       float dy = p[j].y - p[i].y;
       float dz = p[j].z - p[i].z;
       float distSqr = dx*dx + dy*dy + dz*dz + softening;
-      float invDist = rsqrtf(distSqr);
+      float invDist = 1.0/sqrt(distSqr);
       float invDist3 = invDist * invDist * invDist;
 
       Fx += dx * invDist3; Fy += dy * invDist3; Fz += dz * invDist3;
@@ -46,7 +46,7 @@ void gpu_bodyForce(float *p, float dt, int n, float softening) {
       float dy = p[6*j+1] - p[6*i+1];
       float dz = p[6*j+2] - p[6*i+2];
       float distSqr = dx*dx + dy*dy + dz*dz + softening;
-      float invDist = rsqrtf(distSqr);
+      float invDist = 1.0/sqrt(distSqr);
       float invDist3 = invDist * invDist * invDist;
 
       Fx += dx * invDist3; 
@@ -84,7 +84,7 @@ void cpu_bodyForce(float *p, float dt, int n,float softening) {
       float dy = p[6*j+1] - p[6*i+1];
       float dz = p[6*j+2] - p[6*i+2];
       float distSqr = dx*dx + dy*dy + dz*dz + softening;
-      float invDist = rsqrtf(distSqr);
+      float invDist = 1.0/(distSqr);
       float invDist3 = invDist * invDist * invDist;
 
       Fx += dx * invDist3; 
@@ -126,11 +126,7 @@ int main(const int argc, const char** argv) {
 
   float *d_buf;
 
-  ///////////////////
-  cudaMalloc(&d_buf, bytes);
-  nb_error = cudaGetLastError();
-    if(nb_error != cudaSuccess) printf("Error 1: %s\n", cudaGetErrorString(nb_error));
-  //////// 
+  
   
 
   int nBlocks = (nBodies + block_size - 1) / block_size;
@@ -141,6 +137,13 @@ int main(const int argc, const char** argv) {
     cudaEventCreate(&stop) ;
     cudaEventRecord(start, 0) ;
   //////////////////////////////// 
+
+///////////////////
+  cudaMalloc(&d_buf, bytes);
+  nb_error = cudaGetLastError();
+    if(nb_error != cudaSuccess) printf("Error 1: %s\n", cudaGetErrorString(nb_error));
+  //////// 
+
   cudaMemcpy(d_buf, h_buf, bytes, cudaMemcpyHostToDevice);
    nb_error = cudaGetLastError();
     if(nb_error != cudaSuccess) printf("Error 2: %s\n", cudaGetErrorString(nb_error));
