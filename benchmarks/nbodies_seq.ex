@@ -128,7 +128,7 @@ prev = System.monotonic_time()
 lresp=NBodies.nbodies(ebuf,ebuf,dt,softening,nBodies)
 _lresp = NBodies.cpu_integrate(lresp,dt)
 next = System.monotonic_time()
-IO.puts "Elixir\t#{666}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+IO.puts "Elixir\t#{nBodies}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
 ##mresp = Matrex.new([lresp])
 
@@ -136,6 +136,6 @@ IO.puts "Elixir\t#{666}\t#{System.convert_time_unit(next-prev,:native,:milliseco
 ##cpu_resp = NBodies.enbodies(nBodies-1,h_buf,dt,softening,nBodies-1)
 ##cpu_resp = NBodies.ecpu_integrate(nBodies-1,cpu_resp,dt)
 ##next = System.monotonic_time()
-##IO.puts "Elixir\t#{666}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+##IO.puts "Elixir\t#{nBodies}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
 ##NBodies.check_equality(nBodies,cpu_resp,mresp)
