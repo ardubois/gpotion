@@ -64,6 +64,6 @@ GPotion.synchronize()
 next = System.monotonic_time()
 IO.puts "GPotion\t#{dim}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
-image = GPU.get_matrex(ref)
+image = GPotion.get_matrex(ref)
 
 Julia.gen_bmp('juliagpotion.bmp',dim,image)
