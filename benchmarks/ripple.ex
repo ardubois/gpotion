@@ -45,7 +45,7 @@ _n_blocks = floor ((dim+(n_threads-1))/n_threads)
 
 prev = System.monotonic_time()
 
-ref=GPotion.new_gmatrex(mat)
+ref=GPotion.new_gmatrex(1,dim*dim*4)
 GPotion.spawn(ker,{dim,dim,1},{1,1,1},[ref,dim,10])
 GPotion.synchronize()
 image = GPotion.get_gmatrex(ref)
