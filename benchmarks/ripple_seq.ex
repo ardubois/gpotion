@@ -31,7 +31,11 @@ defmodule Ripple do
   end
 end
 
-dim = 5000
+[arg] = System.argv()
+
+usr_value = String.to_integer(arg)
+
+dim = usr_value
 
 indices = for i <- Enum.to_list(0..(dim-1)), j<-Enum.to_list(0..(dim-1)), do: {i,j}
 #IO.inspect indices
