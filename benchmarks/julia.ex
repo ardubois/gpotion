@@ -13,23 +13,23 @@ end
 
 defmodule Julia do
   import GPotion
-gpotion julia_kernel(ptr,dim,[:matrex,:int]) do
-  var x int = blockIdx.x
-  var y int = blockIdx.y
-  var offset int = x + y * dim # gridDim.x
+gpotion julia_kernel(ptr,dim) do
+  x = blockIdx.x
+  y = blockIdx.y
+  offset = x + y * dim # gridDim.x
 #####
-  var juliaValue int = 1
-  var scale float = 0.1
-  var jx float = scale * (dim - x)/dim
-  var jy float = scale * (dim - y)/dim
+  juliaValue = 1
+  scale = 0.1
+  jx = scale * (dim - x)/dim
+  jy = scale * (dim - y)/dim
 
-  var cr float = -0.8
-  var ci float = 0.156
-  var ar float = jx
-  var ai float = jy
+  cr = -0.8
+  ci = 0.156
+  ar = jx
+  ai = jy
   for i in range(0,200) do
-      var nar float = (ar*ar - ai*ai) + cr
-      var nai float = (ai*ar + ar*ai) + ci
+      nar = (ar*ar - ai*ai) + cr
+      nai = (ai*ar + ar*ai) + ci
       if ((nar * nar)+(nai * nai ) > 1000) do
         juliaValue = 0
         break
