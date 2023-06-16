@@ -104,6 +104,10 @@ defmodule GPotion.TypeInference do
           {:var, _ , [{var,_,[type]}]} ->
                 map
                 |> Map.put(var,type)
+          {:return,_,[arg]} ->
+            type = find_type_exp(map,arg)
+            Map.put(map,:return,type)
+
           {_fun, _, args} when is_list(args)->
             Enum.reduce(args,map, fn v,acc -> infer_type_exp(acc,v) end)
             #IO.puts "ya"

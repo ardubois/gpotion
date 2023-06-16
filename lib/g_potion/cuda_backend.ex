@@ -2,6 +2,9 @@ defmodule GPotion.CudaBackend do
   def gen_kernel(name,para,body) do
     "__global__\nvoid #{name}(#{para})\n{\n#{body}\n}"
   end
+  def gen_function(name,para,body,type) do
+    "__device__\n#{type} #{name}(#{para})\n{\n#{body}\n}"
+  end
   def gen_cuda(body,types,is_typed) do
     pid = spawn_link(fn -> types_server([],types,is_typed) end)
     Process.register(pid, :types_server)
