@@ -155,8 +155,8 @@ def load(kernel) do
     {:&, [],[{:/, [], [{{:., [], [module, kernelname]}, [no_parens: true], []}, _nargs]}]} ->
 
 
-              IO.puts module
-              raise "hell"
+              #IO.puts module
+              #raise "hell"
               GPotion.load_kernel_nif(to_charlist(module),to_charlist(kernelname))
 
     _ -> raise "GPotion.build: invalid kernel"
