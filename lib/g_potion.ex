@@ -57,7 +57,7 @@ defmodule GPotion do
     caller_st = __CALLER__
     module_name = to_string caller_st.module
     IO.puts module_name
-    raise "hell"
+
    {param_list,types_para,is_typed,inf_types} = if is_list(List.last(para)) do
       types_para = List.last(para)
       param_list = para
