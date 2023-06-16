@@ -192,7 +192,7 @@ static ERL_NIF_TERM load_kernel_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM
   enif_get_string(env,e_name_fun,kernel_name,size_name_fun+1,ERL_NIF_LATIN1);
   enif_get_string(env,e_name_module,module_name,size_name_module+1,ERL_NIF_LATIN1);
 
-  //strcpy(func_name,kernel_name);
+  strcpy(func_name,kernel_name);
   strcpy(lib_name,"priv/");
   strcat(lib_name,module_name);
   strcat(func_name,"_call");
