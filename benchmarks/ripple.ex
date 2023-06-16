@@ -13,15 +13,15 @@ end
 
 defmodule Ripple do
   import GPotion
-  gpotion ripple_kernel(ptr,dim,ticks,[:matrex,:int,:int]) do
-    var x int = threadIdx.x + blockIdx.x * blockDim.x;
-    var y int = threadIdx.y + blockIdx.y * blockDim.y;
-    var offset int = x + y * blockDim.x * gridDim.x;
+  gpotion ripple_kernel(ptr,dim,ticks) do
+    x = threadIdx.x + blockIdx.x * blockDim.x;
+    y = threadIdx.y + blockIdx.y * blockDim.y;
+    offset = x + y * blockDim.x * gridDim.x;
 
-    var fx float = 0.5 *  x - dim/15;
-    var fy float  = 0.5 *  y - dim/15;
-    var d float = sqrtf( fx * fx + fy * fy );
-    var grey float = floor(128.0 + 127.0 *cos(d/10.0 - ticks/7.0) /(d/10.0 + 1.0));
+    fx = 0.5 *  x - dim/15;
+    fy = 0.5 *  y - dim/15;
+    d = sqrtf( fx * fx + fy * fy );
+    grey = floor(128.0 + 127.0 *cos(d/10.0 - ticks/7.0) /(d/10.0 + 1.0));
     ptr[offset*4 + 0] = grey;
     ptr[offset*4 + 1] = grey;
     ptr[offset*4 + 2] = grey;
