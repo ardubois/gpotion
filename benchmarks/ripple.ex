@@ -51,7 +51,7 @@ GPotion.synchronize()
 image = GPotion.get_gmatrex(ref)
 
 next = System.monotonic_time()
-IO.puts "time gpu #{System.convert_time_unit(next-prev,:native,:millisecond)}"
+IO.puts "GPotion\t#{dim}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
 
 
