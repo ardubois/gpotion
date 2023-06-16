@@ -36,15 +36,15 @@ typedef struct {
 } bitmap;
 #pragma pack(pop)
 __global__
-void ripple_kernel(float *ptr, int dim, int ticks)
+void ripple_kernel(float *ptr, int dim, float ticks)
 {
-int x = (threadIdx.x + (blockIdx.x * blockDim.x));
-int y = (threadIdx.y + (blockIdx.y * blockDim.y));
-int offset = (x + ((y * blockDim.x) * gridDim.x));
-float fx = ((0.5 * x) - (dim / 15));
-float fy = ((0.5 * y) - (dim / 15));
-float d = sqrtf(((fx * fx) + (fy * fy)));
-float grey = floor((128.0 + ((127.0 * cos(((d / 10.0) - (ticks / 7.0)))) / ((d / 10.0) + 1.0))));
+	int x = (threadIdx.x + (blockIdx.x * blockDim.x));
+	int y = (threadIdx.y + (blockIdx.y * blockDim.y));
+	int offset = (x + ((y * blockDim.x) * gridDim.x));
+	float fx = ((0.5 * x) - (dim / 15));
+	float fy = ((0.5 * y) - (dim / 15));
+	float d = sqrtf(((fx * fx) + (fy * fy)));
+	float grey = floor((128.0 + ((127.0 * cos(((d / 10.0) - (ticks / 7.0)))) / ((d / 10.0) + 1.0))));
 	ptr[((offset * 4) + 0)] = grey;
 	ptr[((offset * 4) + 1)] = grey;
 	ptr[((offset * 4) + 2)] = grey;
