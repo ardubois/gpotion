@@ -22,6 +22,9 @@ m = String.to_integer(arg)
 n = m
 k=m
 
+
+
+
 mat = Matrex.fill(1,m*k,1)
 
 f = fn _ -> Enum.random(1..100) end
@@ -44,27 +47,11 @@ c=GPotion.new_gmatrex(1,m*k)
 GPotion.spawn(ker,{grid_rows,grid_cols,1},{block_size,block_size,1},[a,b,c,m,n,k])
 GPotion.synchronize()
 
-result = GPotion.get_gmatrex(c)
+_result = GPotion.get_gmatrex(c)
 
 next = System.monotonic_time()
 #IO.puts "time gpu #{System.convert_time_unit(next-prev,:native,:millisecond)}"
-IO.puts "gpu  #{m}  #{System.convert_time_unit(next-prev,:native,:millisecond)} "
+IO.puts "GPotion\t#{m}\t#{System.convert_time_unit(next-prev,:native,:millisecond)} "
 
 #IO.inspect result
 #IO.puts GPU.Backend.gen_c_kernel('addVectors',4,[])
-
-amat = Matrex.reshape(mat1,m,k)
-bmat = Matrex.reshape(mat2,m,k)
-
-prev = System.monotonic_time()
-cmat = Matrex.dot(amat,bmat)
-next = System.monotonic_time()
-#IO.puts "time cpu #{System.convert_time_unit(next-prev,:native,:millisecond)}"
-IO.puts "cpu  #{m}  #{System.convert_time_unit(next-prev,:native,:millisecond)} "
-
-rmat = Matrex.reshape(result,m,k)
-
-fmat = Matrex.subtract(cmat,rmat)
-
-
-IO.puts "this value must be zero: #{Matrex.sum(fmat)}"
