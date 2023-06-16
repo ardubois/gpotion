@@ -116,6 +116,66 @@ defmodule GPotion do
     end
 end
 
+defmacro gpdef(header, do: body) do
+  {fname, comp_info, para} = header
+
+  caller_st = __CALLER__
+  module_name = to_string caller_st.module
+  #IO.puts module_name
+
+ {param_list,types_para,is_typed,inf_types,fun_type} = if is_list(List.last(para)) do
+    [fun_type|types_para] = List.last(para)
+    param_list = para
+      |> List.delete_at(length(para)-1)
+      |> Enum.map(fn({p, _, _}) -> p end)
+      |> Enum.zip(types_para)
+      |> Enum.map(fn({p,t}) -> gen_para(p,t) end)
+      |> Enum.join(", ")
+    {param_list,types_para,true,%{},fun_type}
+  else
+    types = para
+    |> Enum.map(fn({p, _, _}) -> p end)
+    |> Map.new(fn x -> {x,:none} end)
+    |> Map.put(:return,:none)
+    |> GPotion.TypeInference.infer_types(body)
+
+    fun_type =  Map.get(types,:return)
+    #IO.inspect fun_type
+    #raise "hell"
+    param_list = para
+    |> Enum.map(fn {p, _, _}-> gen_para(p,Map.get(types,p)) end)
+    |> Enum.join(", ")
+
+    types_para = para
+    |>  Enum.map(fn {p, _, _}-> Map.get(types,p) end)
+   {param_list,types_para,false,types,fun_type}
+
+ end
+ cuda_body = GPotion.CudaBackend.gen_cuda(body,inf_types,is_typed)
+ k = GPotion.CudaBackend.gen_function(fname,param_list,cuda_body,fun_type)
+ #accessfunc = GPotion.CudaBackend.gen_kernel_call(fname,length(types_para),Enum.reverse(types_para))
+ if(File.exists?("c_src/#{module_name}.cu")) do
+  file = File.open!("c_src/#{module_name}.cu", [:append])
+  IO.write(file, "\n" <> k <> "\n\n")
+else
+  file = File.open!("c_src/#{module_name}.cu", [:write])
+  IO.write(file, "#include \"erl_nif.h\"\n\n" <> k <> "\n\n")
+  File.close(file)
+end
+ #IO.puts k
+ #IO.puts accessfunc
+ para = if is_list(List.last(para)) do List.delete_at(para,length(para)-1) else para end
+ para = para
+  |> Enum.map(fn {p, b, c}-> {String.to_atom("_" <> to_string(p)),b,c} end)
+
+
+ quote do
+    def unquote({fname,comp_info, para})do
+      raise "A gp function can only be called in kernels"
+    end
+  end
+end
+
   def create_ref_nif(_matrex) do
     raise "NIF create_ref_nif/1 not implemented"
 end
