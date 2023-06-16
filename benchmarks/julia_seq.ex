@@ -61,6 +61,6 @@ prev = System.monotonic_time()
 indices = for i <- Enum.to_list(0..(dim-1)), j<-Enum.to_list(0..(dim-1)), do: {i,j}
 imageseq = Julia.julia_seq(dim,indices)
 next = System.monotonic_time()
-IO.puts "time cpu #{System.convert_time_unit(next-prev,:native,:millisecond)}"
+IO.puts "Elixir\t#{dim}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 imageseq=Matrex.new([imageseq])
 BMP.gen_bmp('julia_seq.bmp',dim,imageseq)
