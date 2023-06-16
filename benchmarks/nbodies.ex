@@ -54,14 +54,7 @@ def calc_nbodies(j,i,p,softening,fx,fy,fz) do
     fz = fz + dz * invDist3;
     calc_nbodies(j-1,i,p,softening,fx,fy,fz)
 end
-gpotion gpu_integrate(p, dt, n) do
-  i = blockDim.x * blockIdx.x + threadIdx.x;
-  if (i < n) do
-    p[6*i] = p[6*i] + p[6*i+3]*dt;
-    p[6*i+1] = p[6*i+1] + p[6*i+4]*dt;
-    p[6*i+2] = p[6*i+2] + p[6*i+5]*dt;
-  end
-end
+
 def cpu_integrate(-1,p,_dt) do
   p
 end
@@ -93,9 +86,23 @@ def check_equality(n,cpu,gpu) do
 end
 end
 
+defmodule Integrate do
+import GPotion
+gpotion gpu_integrate(p, dt, n) do
+  i = blockDim.x * blockIdx.x + threadIdx.x;
+  if (i < n) do
+    p[6*i] = p[6*i] + p[6*i+3]*dt;
+    p[6*i+1] = p[6*i+1] + p[6*i+4]*dt;
+    p[6*i+2] = p[6*i+2] + p[6*i+5]*dt;
+  end
+end
+end
+
 [arg] = System.argv()
 
 user_value = String.to_integer(arg)
+
+
 
 nBodies = user_value #3000;
 block_size =  128;
@@ -113,7 +120,7 @@ h_buf = Matrex.random(1,size_matrex)
 
 
 ker1=GPotion.load(&NBodies.gpu_nBodies/4)
-ker2=GPotion.load(&NBodies.gpu_integrate/3)
+ker2=GPotion.load(&Integrate.gpu_integrate/3)
 
 prev = System.monotonic_time()
 
