@@ -47,12 +47,17 @@ defmodule GPotion do
         end
       end
   end
+  defmacro gpmodule(header,do: body) do
+    IO.inspect header
+    IO.inspect body
+  end
   defmacro gpotion(header, do: body) do
     {fname, comp_info, para} = header
 
-
-
-
+    caller_st = __CALLER__
+    module_name = to_string caller_st.module
+    IO.puts module_name
+    raise "hell"
    {param_list,types_para,is_typed,inf_types} = if is_list(List.last(para)) do
       types_para = List.last(para)
       param_list = para
@@ -80,9 +85,14 @@ defmodule GPotion do
    cuda_body = GPotion.CudaBackend.gen_cuda(body,inf_types,is_typed)
    k = GPotion.CudaBackend.gen_kernel(fname,param_list,cuda_body)
    accessfunc = GPotion.CudaBackend.gen_kernel_call(fname,length(types_para),Enum.reverse(types_para))
-   file = File.open!("c_src/#{fname}.cu", [:write])
-   IO.write(file, "#include \"erl_nif.h\"\n\n" <> k <> "\n\n" <> accessfunc)
-   File.close(file)
+   if(File.exists?("c_src/#{module_name}.cu")) do
+    file = File.open!("c_src/#{module_name}.cu", [:append])
+    IO.write(file, "\n" <> k <> "\n\n" <> accessfunc)
+  else
+    file = File.open!("c_src/#{module_name}.cu", [:write])
+    IO.write(file, "#include \"erl_nif.h\"\n\n" <> k <> "\n\n" <> accessfunc)
+    File.close(file)
+  end
    #IO.puts k
    #IO.puts accessfunc
    para = if is_list(List.last(para)) do List.delete_at(para,length(para)-1) else para end
@@ -94,9 +104,10 @@ defmodule GPotion do
   "--compiler-options",
   "'-fPIC'",
   "-o",
-  "priv/#{fname}.so",
-  "c_src/#{fname}.cu"
+  "priv/#{module_name}.so",
+  "c_src/#{module_name}.cu"
   ], stderr_to_stdout: true)
+  File.rename("c_src/#{module_name}.cu","c_src/#{module_name}_gp.cu")
 
    quote do
       def unquote({fname,comp_info, para})do
@@ -136,22 +147,27 @@ def get_gmatrex({ref,{rows,cols}}) do
 %Matrex{data: get_matrex_nif(ref,rows,cols)}
 end
 
-def load_kernel_nif(_matrex) do
-  raise "NIF new_ref_nif/1 not implemented"
+def load_kernel_nif(_module,_fun) do
+  raise "NIF new_ref_nif/2 not implemented"
 end
 def load(kernel) do
   case Macro.escape(kernel) do
-    {:&, [],[{:/, [], [{{:., [], [_module, kernelname]}, [no_parens: true], []}, _nargs]}]} ->
+    {:&, [],[{:/, [], [{{:., [], [module, kernelname]}, [no_parens: true], []}, _nargs]}]} ->
 
 
-              #IO.puts(result)
-              GPotion.load_kernel_nif(to_charlist(kernelname))
+              IO.puts module
+              raise "hell"
+              GPotion.load_kernel_nif(to_charlist(module),to_charlist(kernelname))
 
     _ -> raise "GPotion.build: invalid kernel"
   end
 end
 def spawn_nif(_k,_t,_b,_l) do
   raise "NIF spawn_nif/1 not implemented"
+end
+def spawn(k,t,b,l) when is_function(k) do
+  load(k)
+  spawn_nif(k,t,b,Enum.map(l,&get_ref/1))
 end
 def spawn(k,t,b,l) do
   spawn_nif(k,t,b,Enum.map(l,&get_ref/1))
