@@ -118,7 +118,7 @@ defmodule GPotion.CudaBackend do
           "#{to_string struct}.#{to_string(field)}"
         {{:., _, [{:__aliases__, _, [struct]}, field]}, _, []} ->
           "#{to_string struct}.#{to_string(field)}"
-        {op, _, args} when op in [:+, :-, :/, :*, :<=, :<, :>, :>=, :&&, :||, :!,:!=] ->
+        {op, _, args} when op in [:+, :-, :/, :*, :<=, :<, :>, :>=, :&&, :||, :!,:!=,:==] ->
           case args do
             [a1] ->
               "(#{to_string(op)} #{gen_exp a1})"

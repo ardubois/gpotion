@@ -189,7 +189,7 @@ defp set_type_exp(map,type,exp) do
                   end
               end
           end
-      {op, info, [arg1,arg2]} when op in [ :<=, :<, :>, :>=, :!=] ->
+      {op, info, [arg1,arg2]} when op in [ :<=, :<, :>, :>=, :!=,:==] ->
         if(type != :int)  do
           raise "Operaotr (#{inspect op}) (#{inspect info}) is being used in a context #{inspect type}"
         end
@@ -312,7 +312,7 @@ end
 
               end
           end
-        {op, _, _args} when op in [ :<=, :<, :>, :>=, :&&, :||, :!,:!=] ->
+        {op, _, _args} when op in [ :<=, :<, :>, :>=, :&&, :||, :!,:!=,:==] ->
           :int
         {var, _, nil} when is_atom(var) ->
           if (Map.get(map,var)==nil) do
