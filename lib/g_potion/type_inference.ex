@@ -149,9 +149,9 @@ defp infer_if(map,[bexp, [do: thenbranch, else: elsebranch]]) do
 end
 defp set_type_exp(map,type,exp) do
     case exp do
-      {{:., _info, [Access, :get]}, _, [arg1,arg2]} ->
+      {{:., info, [Access, :get]}, _, [arg1,arg2]} ->
        if(type != :float) do
-         raise "Matrex  (#{inspect(arg1)}) is being used in a context of type #{inspect type}"
+         raise "Matrex  (#{inspect(arg1)}) (#{inspect(info)}) is being used in a context of type #{inspect type}"
        else
         map
         |> Map.put(get_var(arg1),:matrex)
@@ -165,7 +165,7 @@ defp set_type_exp(map,type,exp) do
           case args do
            [a1] ->
             if(type != :int && type != :float) do
-              raise "Operaotr (-) (#{info}) is being used in a context #{type}"
+              raise "Operaotr (-) (#{inspect info}) is being used in a context #{type}"
             end
             set_type_exp(map,type,a1)
            [a1,a2] ->
@@ -227,7 +227,7 @@ defp set_type_exp(map,type,exp) do
                 |> set_type_exp(:int,a2)
 
           end
-      {var, _, nil} when is_atom(var) ->
+      {var, info, nil} when is_atom(var) ->
         if (Map.get(map,var)==nil) do
           raise "Error: variable #{inspect var} is used in expression before being declared"
         end
@@ -235,7 +235,7 @@ defp set_type_exp(map,type,exp) do
           Map.put(map,var,type)
         else
            if(Map.get(map,var) != type) do
-             raise "Type error: #{inspect var} is being used in a context of type #{type}"
+             raise "Type error: #{inspect var} (#{inspect info}) is being used in a context of type #{type}"
            else
              map
            end
