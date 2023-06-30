@@ -4,15 +4,12 @@
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `gpotion` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:gpotion, "~> 0.1.0"}
-  ]
-end
+* Install Erlang, Elixir and nvcc
+* type: make
+* Some benchmarks also need: make bmp
+* type: mix deps.get
+* type: mix compile
+* benchmarks are in the *benchmarks* folder
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
