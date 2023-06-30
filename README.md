@@ -1,6 +1,6 @@
 # GPotion
 
-**TODO: Add description**
+**A DSL for GPU programming in Elixir**
 
 ## Installation
 
