@@ -10,6 +10,7 @@
 * type: **mix deps.get**
 * type: **mix compile**
 * benchmarks are in the ***benchmarks*** folder
+* type **mix run benchmakrs/mm.ex**
 ```
 
 
