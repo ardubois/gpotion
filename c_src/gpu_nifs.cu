@@ -15,11 +15,18 @@
 
 ErlNifResourceType *KERNEL_TYPE;
 ErlNifResourceType *ARRAY_TYPE;
+ErlNifResourceType *PINNED_ARRAY;
 
 void
 dev_array_destructor(ErlNifEnv *env, void *res) {
   float **dev_array = (float**) res;
   cudaFree(*dev_array);
+}
+
+void
+dev_pinned_array_destructor(ErlNifEnv *env, void *res) {
+  float **dev_array = (float**) res;
+  cudaFreeHost(*dev_array);
 }
 
 static int
@@ -28,10 +35,63 @@ load(ErlNifEnv *env, void **priv_data, ERL_NIF_TERM load_info) {
   enif_open_resource_type(env, NULL, "kernel", NULL, ERL_NIF_RT_CREATE  , NULL);
   ARRAY_TYPE =
   enif_open_resource_type(env, NULL, "gpu_ref", dev_array_destructor, ERL_NIF_RT_CREATE  , NULL);
+  PINNED_ARRAY =
+  enif_open_resource_type(env, NULL, "pinned_array", dev_pinned_array_destructor, ERL_NIF_RT_CREATE  , NULL);
   return 0;
 }
 
+static ERL_NIF_TERM new_pinned_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
 
+  float *host_matrix;
+  cudaError_t error_gpu;
+  int length;
+  ERL_NIF_TERM list;
+  ERL_NIF_TERM head;
+  ERL_NIF_TERM tail;
+  if (!enif_get_list_cell(env,argv[0],&head,&tail)) return enif_make_badarg(env);
+  if (!enif_get_int(env, argv[1], &length))  return enif_make_badarg(env);
+
+
+
+
+  int data_size = sizeof(float)*(length+2);
+  
+
+  ///// MAKE CUDA CALL
+  cudaMallocHost( (void**)&host_matrix, data_size);
+  error_gpu = cudaGetLastError();
+  if(error_gpu != cudaSuccess)  
+      { char message[200];
+        strcpy(message,"Error new_pinned_nif: ");
+        strcat(message, cudaGetErrorString(error_gpu));
+        enif_raise_exception(env,enif_make_string(env, message, ERL_NIF_LATIN1));
+      }
+
+  MX_SET_ROWS(host_matrix, 1);
+  MX_SET_COLS(host_matrix, length);
+
+  list = argv[0];
+
+  for(int i=2;i<(length+2);i++)
+  {
+    enif_get_list_cell(env,list,&head,&tail);
+    double dvalue;
+    enif_get_double(env, head, &dvalue);
+    host_matrix[i] = (float) dvalue;
+    list = tail;
+
+  }
+
+
+  float **pinned_res = (float**)enif_alloc_resource(PINNED_ARRAY, sizeof(float *));
+  *pinned_res = host_matrix;
+  ERL_NIF_TERM term = enif_make_resource(env, pinned_res);
+  // ...and release the resource so that it will be freed when Erlang garbage collects
+  enif_release_resource(pinned_res);
+
+  return term;
+
+}
 static ERL_NIF_TERM create_ref_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
   ErlNifBinary  matrix_el;
   float         *matrix;
@@ -253,6 +313,7 @@ static ERL_NIF_TERM spawn_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[
 
 static ErlNifFunc nif_funcs[] = {
     {"load_kernel_nif", 2, load_kernel_nif},
+    {"new_pinned_niv",2,new_pinned_nif},
     {"spawn_nif", 4,spawn_nif},
     {"create_ref_nif", 1, create_ref_nif},
     {"new_ref_nif", 1, new_ref_nif},
