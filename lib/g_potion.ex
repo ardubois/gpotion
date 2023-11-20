@@ -123,7 +123,7 @@ defmacro gpdef(header, do: body) do
   module_name = to_string caller_st.module
   #IO.puts module_name
 
- {param_list,types_para,is_typed,inf_types,fun_type} = if is_list(List.last(para)) do
+ {param_list,_types_para,is_typed,inf_types,fun_type} = if is_list(List.last(para)) do
     [fun_type|types_para] = List.last(para)
     param_list = para
       |> List.delete_at(length(para)-1)
@@ -178,6 +178,12 @@ end
 
   def create_ref_nif(_matrex) do
     raise "NIF create_ref_nif/1 not implemented"
+end
+def new_pinned_nif(_list,_length) do
+  raise "NIF create_ref_nif/1 not implemented"
+end
+def new_pinned(list) do
+  new_pinned_nif(list,length(list))
 end
 def new_gmatrex(%Matrex{data: matrix} = a) do
   ref=create_ref_nif(matrix)

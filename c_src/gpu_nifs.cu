@@ -313,7 +313,7 @@ static ERL_NIF_TERM spawn_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[
 
 static ErlNifFunc nif_funcs[] = {
     {"load_kernel_nif", 2, load_kernel_nif},
-    {"new_pinned_niv",2,new_pinned_nif},
+    {"new_pinned_nif",2,new_pinned_nif},
     {"spawn_nif", 4,spawn_nif},
     {"create_ref_nif", 1, create_ref_nif},
     {"new_ref_nif", 1, new_ref_nif},
