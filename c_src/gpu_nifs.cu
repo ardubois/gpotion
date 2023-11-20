@@ -58,6 +58,7 @@ static ERL_NIF_TERM new_pinned_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM 
   
 
   ///// MAKE CUDA CALL
+ // teste host_matrix = (float*) malloc(data_size);
   cudaMallocHost( (void**)&host_matrix, data_size);
   error_gpu = cudaGetLastError();
   if(error_gpu != cudaSuccess)  
@@ -66,7 +67,6 @@ static ERL_NIF_TERM new_pinned_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM 
         strcat(message, cudaGetErrorString(error_gpu));
         enif_raise_exception(env,enif_make_string(env, message, ERL_NIF_LATIN1));
       }
-
   MX_SET_ROWS(host_matrix, 1);
   MX_SET_COLS(host_matrix, length);
 
@@ -92,6 +92,52 @@ static ERL_NIF_TERM new_pinned_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM 
   return term;
 
 }
+
+static ERL_NIF_TERM new_gmatrex_pinned_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
+  float         *matrix;
+  float         *dev_matrix;
+  cudaError_t error_gpu;
+  float **array_res;
+
+  if (!enif_get_resource(env, argv[0], PINNED_ARRAY, (void **) &array_res)) {
+    return enif_make_badarg(env);
+  }
+
+  matrix = (float *) *array_res;
+  uint64_t data_size = sizeof(float)*(MX_LENGTH(matrix)-2);
+  
+  matrix +=2; 
+
+  ///// MAKE CUDA CALL
+  cudaMalloc( (void**)&dev_matrix, data_size);
+  error_gpu = cudaGetLastError();
+  if(error_gpu != cudaSuccess)  
+      { char message[200];
+        strcpy(message,"Error create_ref_nif: ");
+        strcat(message, cudaGetErrorString(error_gpu));
+        enif_raise_exception(env,enif_make_string(env, message, ERL_NIF_LATIN1));
+      }
+  ///// MAKE CUDA CALL
+  cudaMemcpy( dev_matrix, matrix, data_size, cudaMemcpyHostToDevice );
+  error_gpu = cudaGetLastError();
+  if(error_gpu != cudaSuccess)  
+      { char message[200];
+        strcpy(message,"Error create_ref_nif: ");
+        strcat(message, cudaGetErrorString(error_gpu));
+        enif_raise_exception(env,enif_make_string(env, message, ERL_NIF_LATIN1));
+      }
+  
+  /////////// END CUDA CALL
+
+  float **gpu_res = (float**)enif_alloc_resource(ARRAY_TYPE, sizeof(float *));
+  *gpu_res = dev_matrix;
+  ERL_NIF_TERM term = enif_make_resource(env, gpu_res);
+  // ...and release the resource so that it will be freed when Erlang garbage collects
+  enif_release_resource(gpu_res);
+
+  return term;
+}
+
 static ERL_NIF_TERM create_ref_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
   ErlNifBinary  matrix_el;
   float         *matrix;
@@ -314,6 +360,7 @@ static ERL_NIF_TERM spawn_nif(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[
 static ErlNifFunc nif_funcs[] = {
     {"load_kernel_nif", 2, load_kernel_nif},
     {"new_pinned_nif",2,new_pinned_nif},
+    {"new_gmatrex_pinned_nif",1,new_gmatrex_pinned_nif},
     {"spawn_nif", 4,spawn_nif},
     {"create_ref_nif", 1, create_ref_nif},
     {"new_ref_nif", 1, new_ref_nif},
