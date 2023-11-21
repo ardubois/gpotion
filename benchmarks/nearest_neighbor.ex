@@ -40,16 +40,33 @@ defmodule NN do
 
 
 end
-d1 = DataSet.open_data_set("benchmarks/data/files")
-IO.inspect(d1)
-IO.puts "start!"
-prev = System.monotonic_time()
-IO.inspect(length(NN.euclid_seq(d1,0,0)))
-next = System.monotonic_time()
-IO.puts "Elixir\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+d1 = DataSet.open_data_set("files")
+#IO.inspect(d1)
+
+size = div(length(d1),2)
+
 m1 = Matrex.new([d1])
 
-IO.inspect(m1)
+ker=GPotion.load(&NN.euclid/5)
+
+prev = System.monotonic_time()
+
+locations = GPotion.new_gmatrex(m1)
+distances = GPotion.new_gmatrex(1,size)
+
+GPotion.spawn(ker,{size,1,1},{1,1,1},[locations,distances,size,0,0])
+
+_dist_result = GPotion.get_gmatrex(distances)
+
+next = System.monotonic_time()
+IO.puts "GPotion\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+
+IO.puts "start Sequential!"
+prev = System.monotonic_time()
+_r_sequential = NN.euclid_seq(d1,0,0)
+next = System.monotonic_time()
+IO.puts "Elixir\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
 
-#IO.puts DataSet.load_file("benchmarks/data/cane4_0.db")
+#IO.inspect(m1)
+
