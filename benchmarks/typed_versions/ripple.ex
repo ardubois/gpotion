@@ -13,7 +13,8 @@ end
 
 defmodule Ripple do
   import GPotion
-  gpotion ripple_kernel(ptr,dim,ticks,[:matrex,:int,:int]) do
+  gptype  ripple_kernel gmatrex ~> integer ~> integer
+  gpotion ripple_kernel(ptr,dim,ticks) do
     var x int = threadIdx.x + blockIdx.x * blockDim.x;
     var y int = threadIdx.y + blockIdx.y * blockDim.y;
     var offset int = x + y * blockDim.x * gridDim.x;

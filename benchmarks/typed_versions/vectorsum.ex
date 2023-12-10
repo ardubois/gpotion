@@ -1,7 +1,7 @@
 defmodule MyKernel do
   import GPotion
-
-gpotion add_vectors(result, a, b, n, [:matrex,:matrex,:matrex,:int]) do
+gptype  add_vectors gmatrex ~> gmatrex ~> gmatrex ~> integer ~> unit
+gpotion add_vectors(result, a, b, n) do
   var index int = threadIdx.x + blockIdx.x * blockDim.x;
   var stride int = blockDim.x * gridDim.x;
   for i in range(index,n,stride) do

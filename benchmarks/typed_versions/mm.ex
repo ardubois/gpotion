@@ -1,8 +1,8 @@
 
-
 defmodule MM do
   import GPotion
-gpotion mm(a,b,c,m,n,k, [:matrex,:matrex,:matrex,:int,:int,:int]) do
+gptype mm gmatrex ~> gmatrex ~> gmatrex ~> integer ~> integer ~> integer ~> unit
+gpotion mm(a,b,c,m,n,k) do
   var row int = blockIdx.y * blockDim.y + threadIdx.y
   var col int = blockIdx.x * blockDim.x + threadIdx.x
   var sum float = 0.0

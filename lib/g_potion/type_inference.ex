@@ -105,8 +105,16 @@ defmodule GPotion.TypeInference do
                 map
                 |> Map.put(var,type)
           {:return,_,[arg]} ->
-            type = find_type_exp(map,arg)
-            Map.put(map,:return,type)
+            inf_type = find_type_exp(map,arg)
+            #IO.inspect "return #{type}"
+            case inf_type do
+              :none -> map
+              _     -> current_type = Map.get(map,:return)
+                       case current_type do
+                            :none -> Map.put(map,:return,inf_type)
+                            _     -> if inf_type == current_type do map else raise "Found two return types for function #{current_type} and #{inf_type}"end
+                       end
+            end
 
           {_fun, _, args} when is_list(args)->
             Enum.reduce(args,map, fn v,acc -> infer_type_exp(acc,v) end)

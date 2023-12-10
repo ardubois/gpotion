@@ -1,6 +1,20 @@
+defmodule Integrate do
+  import GPotion
+  gptype  gpu_integrate gmatrex ~> float ~> integer ~> unit
+  gpotion gpu_integrate(p, dt, n) do
+    var i int  = blockDim.x * blockIdx.x + threadIdx.x;
+    if (i < n) do
+      p[6*i] = p[6*i] + p[6*i+3]*dt;
+      p[6*i+1] = p[6*i+1] + p[6*i+4]*dt;
+      p[6*i+2] = p[6*i+2] + p[6*i+5]*dt;
+    end
+  end
+end
+
 defmodule NBodies do
   import GPotion
-  gpotion gpu_nBodies(p,dt,n,softening,[:matrex,:float,:int,:float]) do
+  gptype  gpu_nBodies gmatrex ~> float ~> integer ~> float ~> unit
+  gpotion gpu_nBodies(p,dt,n,softening) do
     var i int = blockDim.x * blockIdx.x + threadIdx.x
     if (i < n) do
       var fx float= 0.0
@@ -54,14 +68,7 @@ def calc_nbodies(j,i,p,softening,fx,fy,fz) do
     fz = fz + dz * invDist3;
     calc_nbodies(j-1,i,p,softening,fx,fy,fz)
 end
-gpotion gpu_integrate(p, dt, n,[:matrex,:float,:int]) do
-  var i int  = blockDim.x * blockIdx.x + threadIdx.x;
-  if (i < n) do
-    p[6*i] = p[6*i] + p[6*i+3]*dt;
-    p[6*i+1] = p[6*i+1] + p[6*i+4]*dt;
-    p[6*i+2] = p[6*i+2] + p[6*i+5]*dt;
-  end
-end
+
 def cpu_integrate(-1,p,_dt) do
   p
 end
@@ -113,7 +120,7 @@ h_buf = Matrex.random(1,size_matrex)
 
 
 ker1=GPotion.load(&NBodies.gpu_nBodies/4)
-ker2=GPotion.load(&NBodies.gpu_integrate/3)
+ker2=GPotion.load(&Integrate.gpu_integrate/3)
 
 prev = System.monotonic_time()
 

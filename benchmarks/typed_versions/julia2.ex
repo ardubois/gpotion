@@ -13,13 +13,8 @@ end
 
 defmodule Julia do
   import GPotion
-gptype  julia_kernel gmatrex ~> integer ~> unit
-gpotion julia_kernel(ptr,dim) do
-  var x int = blockIdx.x
-  var y int = blockIdx.y
-  var offset int = x + y * dim # gridDim.x
-#####
-  var juliaValue int = 1
+gptype julia integer ~> integer ~> integer ~> integer
+gpdef  julia(x,y,dim) do
   var scale float = 0.1
   var jx float = scale * (dim - x)/dim
   var jy float = scale * (dim - y)/dim
@@ -29,15 +24,24 @@ gpotion julia_kernel(ptr,dim) do
   var ar float = jx
   var ai float = jy
   for i in range(0,200) do
-      var nar float = (ar*ar - ai*ai) + cr
+      var nar float  = (ar*ar - ai*ai) + cr
       var nai float = (ai*ar + ar*ai) + ci
       if ((nar * nar)+(nai * nai ) > 1000) do
-        juliaValue = 0
-        break
+        return 0
       end
       ar = nar
       ai = nai
   end
+  return 1
+end
+gptype  julia_kernel gmatrex ~> integer ~> unit
+gpotion julia_kernel(ptr,dim) do
+  var x int = blockIdx.x
+  var y int = blockIdx.y
+  var offset int = x + y * dim # gridDim.x
+#####
+  var juliaValue int = julia(x,y,dim)
+
   #if (juliaValue != 0) do
   #  juliaValue = 1
   #end
@@ -69,4 +73,4 @@ IO.puts "GPotion\t#{dim}\t#{System.convert_time_unit(next-prev,:native,:millisec
 
 
 
-BMP.gen_bmp('juliagpotion.bmp',dim,image)
+BMP.gen_bmp('julia2gpotion.bmp',dim,image)

@@ -51,6 +51,60 @@ defmodule GPotion do
     IO.inspect header
     IO.inspect body
   end
+  defmacro gptype({func,_,[type]}) do
+    if (nil == Process.whereis(:gptype_server)) do
+      pid = spawn_link(fn -> gptype_server() end)
+      Process.register(pid, :gptype_server)
+    end
+    send(:gptype_server,{:add_type, func,type_to_list(type)})
+    #IO.inspect(type_to_list(type))
+    quote do
+    end
+  end
+  def gptype_server(), do: gptype_server_(Map.new())
+  defp gptype_server_(map) do
+    receive do
+      {:add_type, fun, types}  -> map=Map.put(map,fun, types)
+                              gptype_server_(map)
+      {:get_type, pid,fun} -> type=Map.get(map,fun)
+                              send(pid,{:type,fun,type})
+                              gptype_server_(map)
+      {:kill}               -> :dead
+    end
+  end
+  defp type_to_list({:integer,_,_}), do: [:int]
+  defp type_to_list({:unit,_,_}), do: [:unit]
+  defp type_to_list({:float,_,_}), do: [:float]
+  defp type_to_list({:gmatrex,_,_}), do: [:matrex]
+  defp type_to_list({:~>,_, [a1,a2]}), do: type_to_list(a1) ++ type_to_list(a2)
+  defp type_to_list({x,_,_}), do: raise "Unknown type constructor #{x}"
+  def is_typed?() do
+    nil != Process.whereis(:gptype_server)
+  end
+  def get_type_kernel(fun_name) do
+    send(:gptype_server,{:get_type, self(),fun_name})
+    receive do
+      {:type,fun,type} -> if fun == fun_name do
+                                send(:gptype_server,{:kill})
+                                type
+                          else
+                                raise "Asked for #{fun_name} got #{fun}"
+                          end
+      end
+
+    end
+    def get_type_fun(fun_name) do
+      send(:gptype_server,{:get_type, self(),fun_name})
+      receive do
+        {:type,fun,type} -> if fun == fun_name do
+                                  type
+                            else
+                                  raise "Asked for #{fun_name} got #{fun}"
+                            end
+        end
+
+      end
+
   defmacro gpotion(header, do: body) do
     {fname, comp_info, para} = header
 
@@ -58,30 +112,61 @@ defmodule GPotion do
     module_name = to_string caller_st.module
     #IO.puts module_name
 
-   {param_list,types_para,is_typed,inf_types} = if is_list(List.last(para)) do
-      types_para = List.last(para)
-      param_list = para
-        |> List.delete_at(length(para)-1)
-        |> Enum.map(fn({p, _, _}) -> p end)
-        |> Enum.zip(types_para)
-        |> Enum.map(fn({p,t}) -> gen_para(p,t) end)
-        |> Enum.join(", ")
-      {param_list,types_para,true,%{}}
-    else
-      types = para
-      |> Enum.map(fn({p, _, _}) -> p end)
-      |> Map.new(fn x -> {x,:none} end)
-      |> GPotion.TypeInference.infer_types(body)
+    {delta,is_typed}  = if(is_typed?()) do
+              #IO.puts "asdf"
+              types = get_type_kernel(fname)
+              delta= para
+                |> Enum.map(fn({p, _, _}) -> p end)
+                |> Enum.zip(types)
+                |> Map.new()
 
-      param_list = para
-      |> Enum.map(fn {p, _, _}-> gen_para(p,Map.get(types,p)) end)
+              {delta,true}
+            else
+              #IO.puts "asdf"
+              delta=para
+                |> Enum.map(fn({p, _, _}) -> p end)
+                |> Map.new(fn x -> {x,:none} end)
+              {delta,false}
+            end
+
+
+
+
+   inf_types = GPotion.TypeInference.infer_types(delta,body)
+
+
+   param_list = para
+      |> Enum.map(fn {p, _, _}-> gen_para(p,Map.get(inf_types,p)) end)
       |> Enum.join(", ")
 
-      types_para = para
-      |>  Enum.map(fn {p, _, _}-> Map.get(types,p) end)
-     {param_list,types_para,false,types}
+   types_para = para
+      |>  Enum.map(fn {p, _, _}-> Map.get(inf_types,p) end)
 
-   end
+   #{param_list,types_para,is_typed,inf_types} = if is_list(List.last(para)) do
+   #   types_para = List.last(para)
+   #   param_list = para
+   #     |> List.delete_at(length(para)-1)
+   #     |> Enum.map(fn({p, _, _}) -> p end)
+   #     |> Enum.zip(types_para)
+   #     |> Enum.map(fn({p,t}) -> gen_para(p,t) end)
+   #     |> Enum.join(", ")
+   #   {param_list,types_para,true,%{}}
+   # else
+   #   types = para
+   #   |> Enum.map(fn({p, _, _}) -> p end)
+   #   |> Map.new(fn x -> {x,:none} end)
+   #   |> GPotion.TypeInference.infer_types(body)
+   #
+   #   param_list = para
+   #   |> Enum.map(fn {p, _, _}-> gen_para(p,Map.get(types,p)) end)
+   #   |> Enum.join(", ")
+#
+ #     types_para = para
+  #    |>  Enum.map(fn {p, _, _}-> Map.get(types,p) end)
+   #  {param_list,types_para,false,types}
+#   end
+
+   inf_types = if is_typed do %{} else inf_types end
    cuda_body = GPotion.CudaBackend.gen_cuda(body,inf_types,is_typed)
    k = GPotion.CudaBackend.gen_kernel(fname,param_list,cuda_body)
    accessfunc = GPotion.CudaBackend.gen_kernel_call(fname,length(types_para),Enum.reverse(types_para))
@@ -123,34 +208,65 @@ defmacro gpdef(header, do: body) do
   module_name = to_string caller_st.module
   #IO.puts module_name
 
- {param_list,_types_para,is_typed,inf_types,fun_type} = if is_list(List.last(para)) do
-    [fun_type|types_para] = List.last(para)
-    param_list = para
-      |> List.delete_at(length(para)-1)
+  {delta,is_typed,fun_type}  = if(is_typed?()) do
+    #IO.puts "asdf"
+    types = get_type_fun(fname)
+    [fun_type|_] = Enum.reverse(types)
+    delta= para
       |> Enum.map(fn({p, _, _}) -> p end)
-      |> Enum.zip(types_para)
-      |> Enum.map(fn({p,t}) -> gen_para(p,t) end)
-      |> Enum.join(", ")
-    {param_list,types_para,true,%{},fun_type}
-  else
-    types = para
-    |> Enum.map(fn({p, _, _}) -> p end)
-    |> Map.new(fn x -> {x,:none} end)
-    |> Map.put(:return,:none)
-    |> GPotion.TypeInference.infer_types(body)
+      |> Enum.zip(types)
+      |> Map.new()
 
-    fun_type =  Map.get(types,:return)
-    #IO.inspect fun_type
-    #raise "hell"
-    param_list = para
-    |> Enum.map(fn {p, _, _}-> gen_para(p,Map.get(types,p)) end)
+    {delta,true,fun_type}
+  else
+    #IO.puts "asdf"
+    delta=para
+      |> Enum.map(fn({p, _, _}) -> p end)
+      |> Map.new(fn x -> {x,:none} end)
+    {delta,false,:none}
+  end
+  #IO.inspect fun_type
+  delta = Map.put(delta,:return,fun_type)
+
+  inf_types = GPotion.TypeInference.infer_types(delta,body)
+
+  fun_type = if is_typed do fun_type else Map.get(inf_types,:return) end
+
+  param_list = para
+    |> Enum.map(fn {p, _, _}-> gen_para(p,Map.get(inf_types,p)) end)
     |> Enum.join(", ")
 
-    types_para = para
-    |>  Enum.map(fn {p, _, _}-> Map.get(types,p) end)
-   {param_list,types_para,false,types,fun_type}
+  #types_para = para
+   # |>  Enum.map(fn {p, _, _}-> Map.get(inf_types,p) end)
 
- end
+ #{param_list,_types_para,is_typed,inf_types,fun_type} = if is_list(List.last(para)) do
+  #  [fun_type|types_para] = List.last(para)
+  #  param_list = para
+  #    |> List.delete_at(length(para)-1)
+  #    |> Enum.map(fn({p, _, _}) -> p end)
+  #    |> Enum.zip(types_para)
+  #   |> Enum.map(fn({p,t}) -> gen_para(p,t) end)
+  #   |> Enum.join(", ")
+  # {param_list,types_para,true,%{},fun_type}
+  #else
+  #  types = para
+  #  |> Enum.map(fn({p, _, _}) -> p end)
+  #  |> Map.new(fn x -> {x,:none} end)
+  #  |> Map.put(:return,:none)
+  #  |> GPotion.TypeInference.infer_types(body)
+
+  #  fun_type =  Map.get(types,:return)
+    #IO.inspect fun_type
+    #raise "hell"
+   # param_list = para
+   # |> Enum.map(fn {p, _, _}-> gen_para(p,Map.get(types,p)) end)
+   # |> Enum.join(", ")
+
+  #  types_para = para
+   # |>  Enum.map(fn {p, _, _}-> Map.get(types,p) end)
+   #{param_list,types_para,false,types,fun_type}
+
+ #end
  cuda_body = GPotion.CudaBackend.gen_cuda(body,inf_types,is_typed)
  k = GPotion.CudaBackend.gen_function(fname,param_list,cuda_body,fun_type)
  #accessfunc = GPotion.CudaBackend.gen_kernel_call(fname,length(types_para),Enum.reverse(types_para))
@@ -164,7 +280,7 @@ else
 end
  #IO.puts k
  #IO.puts accessfunc
- para = if is_list(List.last(para)) do List.delete_at(para,length(para)-1) else para end
+ #para = if is_list(List.last(para)) do List.delete_at(para,length(para)-1) else para end
  para = para
   |> Enum.map(fn {p, b, c}-> {String.to_atom("_" <> to_string(p)),b,c} end)
 
