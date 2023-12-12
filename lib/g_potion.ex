@@ -110,19 +110,15 @@ defmodule GPotion do
 
     caller_st = __CALLER__
     module_name = to_string caller_st.module
-    #IO.puts module_name
 
     {delta,is_typed}  = if(is_typed?()) do
-              #IO.puts "asdf"
               types = get_type_kernel(fname)
               delta= para
                 |> Enum.map(fn({p, _, _}) -> p end)
                 |> Enum.zip(types)
                 |> Map.new()
-
               {delta,true}
             else
-              #IO.puts "asdf"
               delta=para
                 |> Enum.map(fn({p, _, _}) -> p end)
                 |> Map.new(fn x -> {x,:none} end)
@@ -132,8 +128,9 @@ defmodule GPotion do
 
 
 
-   inf_types = GPotion.TypeInference.infer_types(delta,body)
+   #inf_types = GPotion.TypeInference.infer_types(delta,body)
 
+   inf_types = GPotion.TypeInference.type_check(delta,body)
 
    param_list = para
       |> Enum.map(fn {p, _, _}-> gen_para(p,Map.get(inf_types,p)) end)
