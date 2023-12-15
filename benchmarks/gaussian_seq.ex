@@ -81,4 +81,4 @@ next = System.monotonic_time()
 _final = Gaussian.Seq.back_substitution(upper_matrix, updated_vector)
 
 #IO.inspect final
-IO.puts "Elixir\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+IO.puts "Elixir\t#{size}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"

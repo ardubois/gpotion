@@ -172,4 +172,4 @@ _final_vector = Gaussian.Substitutions.back_sub(a, b, size)
 #IO.puts("Solution Vector:")
 #MatrixPrinter.print_matrex(final_vector, size)
 
-IO.puts "GPotion\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+IO.puts "GPotion\t#{size}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
