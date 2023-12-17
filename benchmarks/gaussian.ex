@@ -66,8 +66,8 @@ end
 # execução dos algoritmos
 defmodule Gaussian.Substitutions do
   def forward_sub(h_a, h_b, h_m, size, max_block_size, block_size_xy) do
-    kernel1 = GPotion.load(&Gaussian.Fan1.fan1/5)
-    kernel2 = GPotion.load(&Gaussian.Fan2.fan2/6)
+    kernel1 = GPotion.load(&Gaussian.Fan1.fan1/4)
+    kernel2 = GPotion.load(&Gaussian.Fan2.fan2/5)
 
     d_a = GPotion.new_gmatrex(h_a)
     d_b = GPotion.new_gmatrex(h_b)
