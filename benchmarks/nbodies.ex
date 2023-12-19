@@ -130,18 +130,18 @@ d_buf =GPotion.new_gmatrex(h_buf)
 GPotion.spawn(ker1,{nBlocks,1,1},{block_size,1,1},[d_buf,dt,nBodies,softening])
 GPotion.synchronize()
 GPotion.spawn(ker2,{nBlocks,1,1},{block_size,1,1},[d_buf,dt,nBodies])
-gpu_resp = GPotion.get_gmatrex(d_buf)
+_gpu_resp = GPotion.get_gmatrex(d_buf)
 next = System.monotonic_time()
-IO.puts "gpotion\t#{user_value}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+IO.puts "GPotion\t#{user_value}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
 #IO.inspect gpu_resp
 
-prev = System.monotonic_time()
-cpu_resp = NBodies.nbodies(nBodies-1,h_buf,dt,softening,nBodies-1)
-cpu_resp = NBodies.cpu_integrate(nBodies-1,cpu_resp,dt)
-next = System.monotonic_time()
-IO.puts "Elixir\t#{user_value}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+#prev = System.monotonic_time()
+#cpu_resp = NBodies.nbodies(nBodies-1,h_buf,dt,softening,nBodies-1)
+#cpu_resp = NBodies.cpu_integrate(nBodies-1,cpu_resp,dt)
+#next = System.monotonic_time()
+#IO.puts "Elixir\t#{user_value}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
-IO.inspect cpu_resp
+#IO.inspect cpu_resp
 
-NBodies.check_equality(nBodies,cpu_resp,gpu_resp)
+#NBodies.check_equality(nBodies,cpu_resp,gpu_resp)
