@@ -25,7 +25,6 @@ defmodule DataSet do
 end
 
 defmodule NN do
-  import GPotion
   def euclid_seq([],_lat,_lng) do
     []
   end
@@ -35,39 +34,20 @@ defmodule NN do
      value = :math.sqrt((lat-m_lat)*(lat-m_lat)+(lng-m_lng)*(lng-m_lng))
      [value|euclid_seq(Enum.drop(array,2),lat,lng)]
   end
-  gpotion euclid(d_locations, d_distances, numRecords, lat, lng) do
-    globalId = blockDim.x * ( gridDim.x * blockIdx.y + blockIdx.x ) + threadIdx.x
-    ilat = 2 * globalId
-    ilng = (2 * globalId) + 1
-    if (globalId < numRecords) do
-      d_distances[globalId] = sqrt((lat-d_locations[ilat])*(lat-d_locations[ilat])+(lng-d_locations[ilng])*(lng-d_locations[ilng]))
-    end
-  end
 
 
 end
- #d1 = DataSet.open_data_set("files")
+#d1 = DataSet.open_data_set("files")
 #IO.inspect(d1)
 
-#d1 = DataSet.gen_data_set(100000000)
-d1 = DataSet.gen_data_set(1000000)
-size = div(length(d1),2)
+d1 = DataSet.gen_data_set(100000000)
 
-m1 = Matrex.new([d1])
 
-ker=GPotion.load(&NN.euclid/5)
 
 prev = System.monotonic_time()
-
-locations = GPotion.new_gmatrex(m1)
-distances = GPotion.new_gmatrex(1,size)
-
-GPotion.spawn(ker,{size,1,1},{1,1,1},[locations,distances,size,0,0])
-
-_dist_result = GPotion.get_gmatrex(distances)
-
+_r_sequential = NN.euclid_seq(d1,0,0)
 next = System.monotonic_time()
-IO.puts "GPotion\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+IO.puts "Elixir\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
 
 #IO.inspect(m1)

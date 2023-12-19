@@ -10,6 +10,7 @@
  ** Written by Andreas Kura, 02/15/95
  ** Modified by Chong-wei Xu, 04/20/95
  ** Modified by Chris Gregg for CUDA, 07/20/2009
+ ** Modified by André Du Bois, 12/19/2023: clenead up code that I was not using
  **-----------------------------------------------------------
  */
 #include <stdio.h>
