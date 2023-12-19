@@ -18,8 +18,8 @@ defmodule DataSet do
   end
   def gen_data_set(0), do: []
   def gen_data_set(n) do
-    lat = (7 + Enum.random(0..63)) + :random.uniform();
-      lon = (Enum.random(0..358)) + :random.uniform();
+    lat = (7 + Enum.random(0..63)) + :rand.uniform();
+      lon = (Enum.random(0..358)) + :rand.uniform();
       [lat,lon|gen_data_set(n-1)]
   end
 end
