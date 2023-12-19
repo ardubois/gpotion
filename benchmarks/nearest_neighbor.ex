@@ -50,7 +50,14 @@ end
 #IO.inspect(d1)
 
 #d1 = DataSet.gen_data_set(100000000)
-d1 = DataSet.gen_data_set(1000000)
+#d1 = DataSet.gen_data_set(1000000)
+
+[arg] = System.argv()
+
+usr_size = String.to_integer(arg)
+d1 = DataSet.gen_data_set(usr_size)
+
+
 size = div(length(d1),2)
 
 m1 = Matrex.new([d1])

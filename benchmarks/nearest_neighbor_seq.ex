@@ -40,7 +40,12 @@ end
 #d1 = DataSet.open_data_set("files")
 #IO.inspect(d1)
 
-d1 = DataSet.gen_data_set(100000000)
+#d1 = DataSet.gen_data_set(100000000)
+
+[arg] = System.argv()
+
+usr_size = String.to_integer(arg)
+d1 = DataSet.gen_data_set(usr_size)
 
 
 
