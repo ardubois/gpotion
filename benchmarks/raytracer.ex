@@ -171,16 +171,16 @@ defmodule Main do
     end
 
     def main do
-      {radius, sum} = cond do
-        CPUraytracer.dim == 256 -> {20, 5}
-        CPUraytracer.dim == 1024 -> {80, 20}
-        CPUraytracer.dim == 2048 -> {120, 20}
-        CPUraytracer.dim == 3072 -> {160, 20}
-        CPUraytracer.dim == 4096 -> {160, 20}
-        CPUraytracer.dim == 5120 -> {160, 20}
-        CPUraytracer.dim == 6144 -> {160, 20}
-        CPUraytracer.dim == 7168 -> {160,20}
-    end
+        {radius, sum} = cond do
+          Main.dim == 256 -> {20, 5}
+          Main.dim == 1024 -> {80, 20}
+          Main.dim == 2048 -> {120, 20}
+          Main.dim == 3072 -> {160, 20}
+          Main.dim == 4096 -> {160, 20}
+          Main.dim == 5120 -> {160, 20}
+          Main.dim == 6144 -> {160, 20}
+          Main.dim == 7168 -> {160,20}
+        end
         sphereList = Matrex.new([sphereMaker2(Main.spheres, radius, sum)])
 
         width = Main.dim
