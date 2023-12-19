@@ -159,6 +159,10 @@ defmodule Main do
             CPUraytracer.dim == 1024 -> {80, 20}
             CPUraytracer.dim == 2048 -> {120, 20}
             CPUraytracer.dim == 3072 -> {160, 20}
+            CPUraytracer.dim == 4096 -> {160, 20}
+            CPUraytracer.dim == 5120 -> {160, 20}
+            CPUraytracer.dim == 6144 -> {160, 20}
+            CPUraytracer.dim == 7168 -> {160,20}
         end
 
         sphereList = sphereMaker(CPUraytracer.spheres, radius, sum)
@@ -166,28 +170,29 @@ defmodule Main do
         #spherePrinter(sphereList)
 
         width = CPUraytracer.dim
-        #height = width
+        height = width
 
         prev = System.monotonic_time()
-        _image = CPUraytracer.kernelLoop(sphereList, [], 0, 0, width)
+        image = CPUraytracer.kernelLoop(sphereList, [], 0, 0, width)
         next = System.monotonic_time()
 
         IO.puts "Elixir\t#{width}\t#{System.convert_time_unit(next-prev,:native,:millisecond)} "
 
-#        widthInBytes = width * Bmpgen.bytes_per_pixel
-#
-#        paddingSize = rem((4 - rem(widthInBytes, 4)), 4)
-#        stride = widthInBytes + paddingSize
+        widthInBytes = width * Bmpgen.bytes_per_pixel
 
-#        IO.puts("ray tracer completo, iniciando escrita")
-#        Bmpgen.writeFileHeader(height, stride)
-#        Bmpgen.writeInfoHeader(height, width)
-#        Bmpgen.recursiveWrite(image)
+        paddingSize = rem((4 - rem(widthInBytes, 4)), 4)
+        stride = widthInBytes + paddingSize
+
+        IO.puts("ray tracer completo, iniciando escrita")
+        Bmpgen.writeFileHeader(height, stride)
+        Bmpgen.writeInfoHeader(height, width)
+        Bmpgen.recursiveWrite(image)
 
 #        {iteration, _} = Integer.parse(Enum.at(System.argv, 2))
 #        text = "time: #{System.convert_time_unit(next - prev,:native,:microsecond)}, iteration: #{iteration}, dimension: #{height}x#{width}, spheres: #{CPUraytracer.spheres} \n"
 
 #        File.write!("time-cpuraytracer.txt", text, [:append])
+        IO.puts("end")
     end
 end
 
