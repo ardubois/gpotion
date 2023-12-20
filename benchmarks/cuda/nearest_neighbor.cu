@@ -85,6 +85,7 @@ int main(int argc, char* argv[])
 
 
 	// Scaling calculations - added by Sam Kauffman
+	/*
 	cudaDeviceProp deviceProp;
 	cudaGetDeviceProperties( &deviceProp, 0 );
 	 cudaDeviceSynchronize();
@@ -106,6 +107,7 @@ int main(int argc, char* argv[])
 	unsigned long gridX = ceilDiv( blocks, gridY );
 	// There will be no more than (gridY - 1) extra blocks
 	dim3 gridDim( gridX, gridY );
+	*/
 
 	/*if ( DEBUG )
 	{
@@ -121,7 +123,9 @@ int main(int argc, char* argv[])
 		print( gridX );
 	}*/
 
+
 	/**
+	
 	* Allocate memory on host and device
 
   */
@@ -145,7 +149,7 @@ int main(int argc, char* argv[])
     * Execute kernel
     */
 
-    euclid<<< gridDim, threadsPerBlock >>>(d_locations,d_distances,numRecords,lat,lng);
+    euclid<<< numRecords, 1 >>>(d_locations,d_distances,numRecords,lat,lng);
     cudaDeviceSynchronize();
 
 
