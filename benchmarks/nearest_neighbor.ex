@@ -74,7 +74,7 @@ GPotion.spawn(ker,{size,1,1},{1,1,1},[locations,distances,size,0,0])
 _dist_result = GPotion.get_gmatrex(distances)
 
 next = System.monotonic_time()
-IO.puts "GPotion\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+IO.puts "GPotion\t#{usr_size}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
 
 #IO.inspect(m1)

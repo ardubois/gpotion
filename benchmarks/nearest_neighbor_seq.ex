@@ -52,7 +52,7 @@ d1 = DataSet.gen_data_set(usr_size)
 prev = System.monotonic_time()
 _r_sequential = NN.euclid_seq(d1,0,0)
 next = System.monotonic_time()
-IO.puts "Elixir\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+IO.puts "Elixir\t#{usr_size}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
 
 #IO.inspect(m1)
