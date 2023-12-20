@@ -168,9 +168,9 @@ int main(int argc, char* argv[])
 }
 
 void loadData(std::vector<LatLong> &locations, int size){
-   LatLong latLong;
+   
 	for (int i=0;i<size;i++){
-      
+			LatLong latLong;
             latLong.lat = ((float)(7 + rand() % 63)) + ((float) rand() / (float) 0x7fffffff);
 
             latLong.lng = ((float)(rand() % 358)) + ((float) rand() / (float) 0x7fffffff); 
