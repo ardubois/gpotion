@@ -74,7 +74,7 @@ int main (int argc, char *argv[]) {
 	for(int i=0; i<blocksPerGrid; i++) {
 		c += partial_c[i];
 	}
-    printf("result %f\n",c);
+   
 	cudaFree(dev_a);
 	cudaFree(dev_partial_c);
     
