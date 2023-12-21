@@ -47,7 +47,7 @@ numberOfBlocks = blocksPerGrid
 
 prev = System.monotonic_time()
 
-kernel=GPotion.load(&DP.dot_product/5)
+kernel=GPotion.load(&GPUDP.dot_product/4)
 
 ref1=GPotion.new_gmatrex(vet1)
 ref2=GPotion.new_gmatrex(vet2)
@@ -57,7 +57,7 @@ GPotion.spawn(kernel,{numberOfBlocks,1,1},{threadsPerBlock,1,1},[ref3, ref1,ref2
 GPotion.synchronize()
 
 resultreal = GPotion.get_gmatrex(ref3)
-s = Matrex.sum(resultreal)
+_s = Matrex.sum(resultreal)
 next = System.monotonic_time()
 
 IO.puts "GPotion\t#{n}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
