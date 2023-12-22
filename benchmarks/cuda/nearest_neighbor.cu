@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
     cudaMemcpy( d_locations, &locations[0], sizeof(LatLong) * numRecords, cudaMemcpyHostToDevice);
 
     /**
-    * Execute kernel
+    * Execute kernel --
     */
 
     euclid<<< numRecords, 1 >>>(d_locations,d_distances,numRecords,lat,lng);
