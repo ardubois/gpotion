@@ -36,7 +36,7 @@ end
 
 #list = [Enum.to_list(0..(n-1))]
 
-vet1 = Matrex.new((1, n, fn -> :rand.uniform() end)
+vet1 = Matrex.new(1, n, fn -> :rand.uniform() end)
 #vet2 = Matrex.new(list)
 
 
