@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
     int size_dist = numRecords/2;
 	distances = (float *)malloc(sizeof(float) * size_dist);
 	cudaMalloc((void **) &d_locations,sizeof(LatLong) * numRecords);
-	cudaMalloc((void **) &d_distances,sizeof(float) * numRecords);
+	cudaMalloc((void **) &d_distances,sizeof(float) * size_dist);
 
    /**
     * Transfer data from host to device
