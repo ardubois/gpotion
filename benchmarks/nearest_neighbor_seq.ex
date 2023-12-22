@@ -1,3 +1,4 @@
+require Integer
 defmodule DataSet do
   def open_data_set(file) do
     {:ok, contents} = File.read(file)
@@ -21,6 +22,13 @@ defmodule DataSet do
     lat = (7 + Enum.random(0..63)) + :rand.uniform();
       lon = (Enum.random(0..358)) + :rand.uniform();
       [lat,lon|gen_data_set(n-1)]
+  end
+  def gen_lat_long(_l,c) do
+    if(Integer.is_even(c)) do
+      (Enum.random(0..358)) + :rand.uniform()
+    else
+      (7 + Enum.random(0..63)) + :rand.uniform()
+    end
   end
 end
 

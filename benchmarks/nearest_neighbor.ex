@@ -1,3 +1,4 @@
+require Integer
 defmodule DataSet do
   def open_data_set(file) do
     {:ok, contents} = File.read(file)
@@ -21,6 +22,13 @@ defmodule DataSet do
     lat = (7 + Enum.random(0..63)) + :rand.uniform();
       lon = (Enum.random(0..358)) + :rand.uniform();
       [lat,lon|gen_data_set(n-1)]
+  end
+  def gen_lat_long(_l,c) do
+    if(Integer.is_even(c)) do
+      (Enum.random(0..358)) + :rand.uniform()
+    else
+      (7 + Enum.random(0..63)) + :rand.uniform()
+    end
   end
 end
 
@@ -55,12 +63,12 @@ end
 [arg] = System.argv()
 
 usr_size = String.to_integer(arg)
-d1 = DataSet.gen_data_set(usr_size)
+#d1 = DataSet.gen_data_set(usr_size)
 
 
-size = div(length(d1),2)
+size = div(usr_size,2)
 
-m1 = Matrex.new([d1])
+m1 = Matrex.new(1,usr_size,&DataSet.gen_lat_long/2)
 
 ker=GPotion.load(&NN.euclid/5)
 
