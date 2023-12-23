@@ -66,9 +66,9 @@ usr_size = String.to_integer(arg)
 #d1 = DataSet.gen_data_set(usr_size)
 
 
-size = div(usr_size,2)
+size = usr_size
 
-m1 = Matrex.new(1,usr_size,&DataSet.gen_lat_long/2)
+m1 = Matrex.new(1,2*usr_size,&DataSet.gen_lat_long/2)
 
 ker=GPotion.load(&NN.euclid/5)
 
