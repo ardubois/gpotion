@@ -17,11 +17,13 @@ defmodule DataSet do
     |> Enum.map(fn line -> words = String.split(line, " ", trim: true)
                            [ elem(Float.parse(Enum.at(words, 6)),0), elem(Float.parse(Enum.at(words,7)), 0) ] end  )
   end
-  def gen_data_set(0), do: []
-  def gen_data_set(n) do
+  def gen_data_set(n), do: gen_data_set_(n,[])
+  def gen_data_set_(0,data), do: data
+  def gen_data_set_(n,data) do
     lat = (7 + Enum.random(0..63)) + :rand.uniform();
       lon = (Enum.random(0..358)) + :rand.uniform();
-      [lat,lon|gen_data_set(n-1)]
+      gen_data_set_(n-1, [lat,lon|data])
+
   end
   def gen_lat_long(_l,c) do
     if(Integer.is_even(c)) do
@@ -33,14 +35,15 @@ defmodule DataSet do
 end
 
 defmodule NN do
-  def euclid_seq([],_lat,_lng) do
-    []
+  def euclid_seq(l,lat,lng), do: euclid_seq_(l,lat,lng,[])
+  def euclid_seq_([],_lat,_lng, data) do
+    data
   end
-  def euclid_seq(array,lat,lng) do
+  def euclid_seq_(array,lat,lng,data) do
      m_lat = Enum.at(array,0)
      m_lng = Enum.at(array,1)
      value = :math.sqrt((lat-m_lat)*(lat-m_lat)+(lng-m_lng)*(lng-m_lng))
-     [value|euclid_seq(Enum.drop(array,2),lat,lng)]
+     euclid_seq_(Enum.drop(array,2),lat,lng,[value|data])
   end
 
 
