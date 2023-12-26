@@ -36,15 +36,16 @@ end
 
 defmodule NN do
   def euclid_seq(l,lat,lng), do: euclid_seq_(l,lat,lng,[])
-  def euclid_seq_([],_lat,_lng, data) do
-    data
-  end
   def euclid_seq_([m_lat,m_lng|array],lat,lng,data) do
     # m_lat = Enum.at(array,0)
      #m_lng = Enum.at(array,1)
      value = :math.sqrt((lat-m_lat)*(lat-m_lat)+(lng-m_lng)*(lng-m_lng))
      euclid_seq_(array,lat,lng,[value|data])
   end
+  def euclid_seq_([],_lat,_lng, data) do
+    data
+  end
+
 
 
 end
