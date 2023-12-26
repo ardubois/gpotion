@@ -180,6 +180,7 @@ defmodule Main do
           Main.dim == 5120 -> {160, 20}
           Main.dim == 6144 -> {160, 20}
           Main.dim == 7168 -> {160,20}
+          true     -> {160,20}
         end
         sphereList = Matrex.new([sphereMaker2(Main.spheres, radius, sum)])
 
@@ -197,20 +198,20 @@ defmodule Main do
         GPotion.spawn(kernel,{trunc(width/16),trunc(height/16),1},{16,16,1},[width, height, refSphere, refImag])
         GPotion.synchronize()
 
-        _image = GPotion.get_gmatrex(refImag)
+        image = GPotion.get_gmatrex(refImag)
 
         next = System.monotonic_time()
         IO.puts "GPotion\t#{width}\t#{System.convert_time_unit(next-prev,:native,:millisecond)} "
-        #image = Matrex.to_list(image)
+        image = Matrex.to_list(image)
 
-        #widthInBytes = width * Bmpgen.bytes_per_pixel
-        #paddingSize = rem((4 - rem(widthInBytes, 4)), 4)
-        #stride = widthInBytes + paddingSize
+        widthInBytes = width * Bmpgen.bytes_per_pixel
+        paddingSize = rem((4 - rem(widthInBytes, 4)), 4)
+        stride = widthInBytes + paddingSize
 
         #IO.puts("Ray tracer completo, iniciado escrita de imagem")
-        #Bmpgen.writeFileHeader(height, stride)
-        #Bmpgen.writeInfoHeader(height, width)
-        #Bmpgen.recursiveWrite(image)
+        Bmpgen.writeFileHeader(height, stride)
+        Bmpgen.writeInfoHeader(height, width)
+        Bmpgen.recursiveWrite(image)
 
         #{iteration, _} = Integer.parse(Enum.at(System.argv, 2))
         #text = "time: #{System.convert_time_unit(next - prev,:native,:microsecond)}, dimension: #{height}x#{width}, spheres: #{Main.spheres}, iteration: #{iteration} \n"
