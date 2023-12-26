@@ -192,7 +192,7 @@ defmodule Main do
         prev = System.monotonic_time()
 
         refSphere = GPotion.new_gmatrex(sphereList)
-        refImag = GPotion.new_gmatrex(1, width  * height  * 4)
+        refImag = GPotion.new_gmatrex(1, (width+1)  * (height+1)  * 4)
 
         kernel = GPotion.load(&RayTracer.raytracing/4)
         GPotion.spawn(kernel,{trunc(width/16),trunc(height/16),1},{16,16,1},[width, height, refSphere, refImag])
