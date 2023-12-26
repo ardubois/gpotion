@@ -71,4 +71,4 @@ IO.puts "GPotion\t#{dim}\t#{System.convert_time_unit(next-prev,:native,:millisec
 
 
 
-BMP.gen_bmp('julia2gpotion.bmp',dim,image)
+#BMP.gen_bmp('julia2gpotion.bmp',dim,image)
