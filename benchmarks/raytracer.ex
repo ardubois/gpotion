@@ -2,6 +2,19 @@ import Bitwise
 
 Random.seed(313)
 
+defmodule BMP do
+  @on_load :load_nifs
+  def load_nifs do
+      :erlang.load_nif('./priv/bmp_nifs', 0)
+  end
+  def gen_bmp_nif(_string,_dim,_mat) do
+      raise "gen_bmp_nif not implemented"
+  end
+  def gen_bmp(string,dim,%Matrex{data: matrix} = _a) do
+    gen_bmp_nif(string,dim,matrix)
+  end
+end
+
 defmodule RayTracer do
 import GPotion
 
@@ -192,7 +205,7 @@ defmodule Main do
         prev = System.monotonic_time()
 
         refSphere = GPotion.new_gmatrex(sphereList)
-        refImag = GPotion.new_gmatrex(1, (width+1)  * (height+1)  * 4)
+        refImag = GPotion.new_gmatrex(1, (width)  * (height)  * 4)
 
         kernel = GPotion.load(&RayTracer.raytracing/4)
         GPotion.spawn(kernel,{trunc(width/16),trunc(height/16),1},{16,16,1},[width, height, refSphere, refImag])
@@ -202,21 +215,20 @@ defmodule Main do
 
         next = System.monotonic_time()
         IO.puts "GPotion\t#{width}\t#{System.convert_time_unit(next-prev,:native,:millisecond)} "
-        image = Matrex.to_list(image)
 
-        widthInBytes = width * Bmpgen.bytes_per_pixel
-        paddingSize = rem((4 - rem(widthInBytes, 4)), 4)
-        stride = widthInBytes + paddingSize
 
-        #IO.puts("Ray tracer completo, iniciado escrita de imagem")
-        Bmpgen.writeFileHeader(height, stride)
-        Bmpgen.writeInfoHeader(height, width)
-        Bmpgen.recursiveWrite(image)
+        BMP.gen_bmp('julia_seq.bmp',widith,image)
 
-        #{iteration, _} = Integer.parse(Enum.at(System.argv, 2))
-        #text = "time: #{System.convert_time_unit(next - prev,:native,:microsecond)}, dimension: #{height}x#{width}, spheres: #{Main.spheres}, iteration: #{iteration} \n"
+        #image = Matrex.to_list(image)
 
-        #File.write!("time-gpuraytracer.txt", text, [:append])
+        #widthInBytes = width * Bmpgen.bytes_per_pixel
+        #paddingSize = rem((4 - rem(widthInBytes, 4)), 4)
+        #stride = widthInBytes + paddingSize
+
+        #Bmpgen.writeFileHeader(height, stride)
+        #Bmpgen.writeInfoHeader(height, width)
+        #Bmpgen.recursiveWrite(image)
+
 
     end
 end
