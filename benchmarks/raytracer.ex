@@ -217,7 +217,7 @@ defmodule Main do
         IO.puts "GPotion\t#{width}\t#{System.convert_time_unit(next-prev,:native,:millisecond)} "
 
 
-        BMP.gen_bmp('julia_seq.bmp',widith,image)
+        BMP.gen_bmp('julia_seq.bmp',width,image)
 
         #image = Matrex.to_list(image)
 
