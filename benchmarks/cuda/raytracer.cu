@@ -109,6 +109,24 @@ struct Sphere {
     float   x,y,z;
 };
 
+void loadSpheres(Sphere *vet, int size, int dim, int radius, int sum){
+   
+	for (int i=0;i<size;i++){
+			Sphere sphere;
+            sphere.r = rnd(1);
+            sphere.b = rnd(1);
+            sphere.g = rnd(1);
+            sphere.radius = rnd(radius) + sum;
+            sphere.x = rnd(dim) - trunc(dim / 2);
+            sphere.y = rnd(dim) - trunc(dim / 2);
+            sphere.z = rnd(256) - 128;
+
+            vet[i] = sphere;
+            
+           
+        }
+}
+
 #define SPHERES 20
 
 __global__ void kernel(int dim, Sphere * s,  float *ptr ) {
@@ -154,14 +172,17 @@ __global__ void kernel(int dim, Sphere * s,  float *ptr ) {
 int main(int argc, char *argv[]){
     int dim = atoi(argv[1]);
     //int sph = atoi(argv[2]);
-    int iteration = atoi(argv[3]);
-
+    
     float   *final_image;
     float   *dev_image;
     Sphere * s;
 
     final_image = (float*) malloc(dim * dim * sizeof(float)*4);
     Sphere *temp_s = (Sphere*)malloc( sizeof(Sphere) * SPHERES );
+    
+    loadSpheres(temp_s, SPHERES, dim, 160, 20);
+
+    /*
 
     if(dim == 256) {
       temp_s[0] = { 0.5647144993438521, 0.17026276436658833, 0.2513199255348369, 17.309945982238226, -83.67052217169714, -119.68724631488998, 98.2803430280465 };
@@ -231,6 +252,7 @@ temp_s[19]=	 { 0.5646229438154241	 ,0.6811426129947813	 , 0.023316141239661855	 
     
         }
   
+*/
 
     float time;
     cudaEvent_t start, stop;   
@@ -259,7 +281,7 @@ temp_s[19]=	 { 0.5646229438154241	 ,0.6811426129947813	 , 0.023316141239661855	 
 
      printf("CUDA\t%d\t%3.1f\n", dim,time);
 
-    /*
+    
     int height = dim;
     int width = dim;
     
@@ -275,21 +297,21 @@ temp_s[19]=	 { 0.5646229438154241	 ,0.6811426129947813	 , 0.023316141239661855	 
     int i, j;
     for (i = 0; i < height; i++) {
         for (j = 0; j < width; j++) {
-            image[(i * dim + j) * 4 + 3] = final_bitmap[(i * dim + j) * 4 + 3] ;
-            image[(i * dim + j) * 4 + 0] = final_bitmap[(i * dim + j) * 4 + 2] ;
-            image[(i * dim + j) * 4 + 1] = final_bitmap[(i * dim + j) * 4 + 1] ;
-            image[(i * dim + j) * 4 + 2] = final_bitmap[(i * dim + j) * 4 + 0] ;
+            image[(i * dim + j) * 4 + 3] = final_image[(i * dim + j) * 4 + 3] ;
+            image[(i * dim + j) * 4 + 0] = final_image[(i * dim + j) * 4 + 2] ;
+            image[(i * dim + j) * 4 + 1] = final_image[(i * dim + j) * 4 + 1] ;
+            image[(i * dim + j) * 4 + 2] = final_image[(i * dim + j) * 4 + 0] ;
         }
     }
 
-    //generateBitmapImage((unsigned char*) image, height, width, imageFileName);
+    generateBitmapImage((unsigned char*) image, height, width, imageFileName);
     //printf("Image generated!!");
 
-    generateLog(elapsed_time, dim, sph, iteration);
+    //generateLog(elapsed_time, dim, sph, iteration);
 
     free(image);
     free(temp_s);
     free(final_image);
 
-*/
+
 }
