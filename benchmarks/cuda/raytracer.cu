@@ -81,7 +81,7 @@ struct Sphere {
     float   x,y,z;
 };
 
-void loadSpheres(Sphere *vet, int size, int dim, int radius, int sum){
+void loadSpheres(Sphere *vet, int size, float dim, float radius, float sum){
    
 	for (int i=0;i<size;i++){
 			Sphere sphere;
@@ -154,11 +154,11 @@ int main(int argc, char *argv[]){
     
     loadSpheres(temp_s, SPHERES, dim, 160, 20);
 
-    //Sphere ss=temp_s[0];
+   // Sphere ss=temp_s[0];
 
     //printf("Sphere: r:%f b:%f g:%f radius:%f x:%f y:%f z:%f\n",ss.r,ss.b,ss.g,ss.radius,ss.x,ss.y,ss.z);
     //printf("rand: %f\n", rnd(1.0));
-    //exit(0);
+   // exit(0);
 
     /*
 
