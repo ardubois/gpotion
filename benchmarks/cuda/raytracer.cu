@@ -85,9 +85,9 @@ void loadSpheres(Sphere *vet, int size, int dim, int radius, int sum){
    
 	for (int i=0;i<size;i++){
 			Sphere sphere;
-            sphere.r = rnd(1);
-            sphere.b = rnd(1);
-            sphere.g = rnd(1);
+            sphere.r = rnd(1.0);
+            sphere.b = rnd(1.0);
+            sphere.g = rnd(1.0);
             sphere.radius = rnd(radius) + sum;
             sphere.x = rnd(dim) - trunc(dim / 2);
             sphere.y = rnd(dim) - trunc(dim / 2);
@@ -153,6 +153,12 @@ int main(int argc, char *argv[]){
     Sphere *temp_s = (Sphere*)malloc( sizeof(Sphere) * SPHERES );
     
     loadSpheres(temp_s, SPHERES, dim, 160, 20);
+
+    //Sphere ss=temp_s[0];
+
+    //printf("Sphere: r:%f b:%f g:%f radius:%f x:%f y:%f z:%f\n",ss.r,ss.b,ss.g,ss.radius,ss.x,ss.y,ss.z);
+    //printf("rand: %f\n", rnd(1.0));
+    //exit(0);
 
     /*
 
