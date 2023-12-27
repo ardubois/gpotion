@@ -3,7 +3,7 @@
 #include <stdint.h>
 #define rnd( x ) (x * rand() / RAND_MAX)
 #define INF     2e10f
-
+//asdf
 #define _bitsperpixel 32
 #define _planes 1
 #define _compression 0
