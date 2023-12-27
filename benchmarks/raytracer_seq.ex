@@ -174,27 +174,21 @@ defmodule Main do
         #height = width
 
         prev = System.monotonic_time()
-        image = CPUraytracer.kernelLoop(sphereList, [], 0, 0, width)
+        _image = CPUraytracer.kernelLoop(sphereList, [], 0, 0, width)
         next = System.monotonic_time()
 
         IO.puts "Elixir\t#{width}\t#{System.convert_time_unit(next-prev,:native,:millisecond)} "
 
-        height = width
-        widthInBytes = width * Bmpgen.bytes_per_pixel
+        #height = width
+        #widthInBytes = width * Bmpgen.bytes_per_pixel
 
-        paddingSize = rem((4 - rem(widthInBytes, 4)), 4)
-        stride = widthInBytes + paddingSize
+        #paddingSize = rem((4 - rem(widthInBytes, 4)), 4)
+        #stride = widthInBytes + paddingSize
 
-        #IO.puts("ray tracer completo, iniciando escrita")
-        Bmpgen.writeFileHeader(height, stride)
-        Bmpgen.writeInfoHeader(height, width)
-        Bmpgen.recursiveWrite(image)
+        #Bmpgen.writeFileHeader(height, stride)
+        #Bmpgen.writeInfoHeader(height, width)
+        #Bmpgen.recursiveWrite(image)
 
-#        {iteration, _} = Integer.parse(Enum.at(System.argv, 2))
-#        text = "time: #{System.convert_time_unit(next - prev,:native,:microsecond)}, iteration: #{iteration}, dimension: #{height}x#{width}, spheres: #{CPUraytracer.spheres} \n"
-
-#        File.write!("time-cpuraytracer.txt", text, [:append])
-        #IO.puts("end")
     end
 end
 

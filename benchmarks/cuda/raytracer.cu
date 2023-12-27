@@ -258,7 +258,7 @@ temp_s[19]=	 { 0.5646229438154241	 ,0.6811426129947813	 , 0.023316141239661855	 
     cudaEventElapsedTime(&time, start, stop) ;
 
      printf("CUDA\t%d\t%3.1f\n", dim,time);
-     genBpm(dim,dim,final_image);
+    // genBpm(dim,dim,final_image);
     /*
     int height = dim;
     int width = dim;

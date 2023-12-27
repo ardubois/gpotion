@@ -1,36 +1,48 @@
 for i in $(seq 1 30)
 do
-        mix run benchmarks/raytracer.ex 1024
+        mix run benchmarks/raytracer.ex 5120
 done
 for i in $(seq 1 30)
 do
-        mix run benchmarks/raytracer.ex 2048
+        mix run benchmarks/raytracer.ex 7168
 done
 for i in $(seq 1 30)
 do
-        mix run benchmarks/raytracer.ex 3072
+        mix run benchmarks/raytracer.ex 9216
 done
 for i in $(seq 1 30)
 do
-        mix run benchmarks/cuda/raytracer 1024
+        mix run benchmarks/raytracer.ex 11264
 done
 for i in $(seq 1 30)
 do
-        mix run benchmarks/cuda/raytracer 2048
+        benchmarks/cuda/raytracer 5120
 done
 for i in $(seq 1 30)
 do
-        mix run benchmarks/cuda/raytracer 3072
+        benchmarks/cuda/raytracer 7168
 done
 for i in $(seq 1 30)
 do
-        mix run benchmarks/raytracer_seq.ex 1024
+        benchmarks/cuda/raytracer 9216
 done
 for i in $(seq 1 30)
 do
-        mix run benchmarks/raytracer_seq.ex 2048
+        benchmarks/cuda/raytracer 11264
 done
 for i in $(seq 1 30)
 do
-        mix run benchmarks/raytracer_seq.ex 3072
+        mix run benchmarks/raytracer_seq.ex 5120
+done
+for i in $(seq 1 30)
+do
+        mix run benchmarks/raytracer_seq.ex 7168
+done
+for i in $(seq 1 30)
+do
+        mix run benchmarks/raytracer_seq.ex 9216
+done
+for i in $(seq 1 30)
+do
+        mix run benchmarks/raytracer_seq.ex 11264
 done

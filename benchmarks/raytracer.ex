@@ -200,6 +200,7 @@ defmodule Main do
         width = Main.dim
         height = width
 
+
         #imageList = Matrex.zeros(1, (width + 1) * (height + 1) * 4)
 
         prev = System.monotonic_time()
@@ -211,13 +212,13 @@ defmodule Main do
         GPotion.spawn(kernel,{trunc(width/16),trunc(height/16),1},{16,16,1},[width, height, refSphere, refImag])
         GPotion.synchronize()
 
-        image = GPotion.get_gmatrex(refImag)
+        _image = GPotion.get_gmatrex(refImag)
 
         next = System.monotonic_time()
         IO.puts "GPotion\t#{width}\t#{System.convert_time_unit(next-prev,:native,:millisecond)} "
 
 
-        BMP.gen_bmp('julia_seq.bmp',width,image)
+        #BMP.gen_bmp('julia_seq.bmp',width,image)
 
         #image = Matrex.to_list(image)
 
