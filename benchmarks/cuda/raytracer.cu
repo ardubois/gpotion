@@ -259,37 +259,9 @@ temp_s[19]=	 { 0.5646229438154241	 ,0.6811426129947813	 , 0.023316141239661855	 
 
      printf("CUDA\t%d\t%3.1f\n", dim,time);
     // genBpm(dim,dim,final_image);
-    /*
-    int height = dim;
-    int width = dim;
     
-    unsigned char* image = (unsigned char*) malloc(dim * dim *4); //[height][width][BYTES_PER_PIXEL];
-
-    //double elapsed_time = ((double)(end_time - start_time) * 1000000.0) / CLOCKS_PER_SEC;
-
-    char imageFileName[50];
-
-    sprintf(imageFileName, "img-c-CUDAraytracer-%dx%d.bmp", dim, dim);
-  
-
-    int i, j;
-    for (i = 0; i < height; i++) {
-        for (j = 0; j < width; j++) {
-            image[(i * dim + j) * 4 + 3] = final_image[(i * dim + j) * 4 + 3] ;
-            image[(i * dim + j) * 4 + 0] = final_image[(i * dim + j) * 4 + 2] ;
-            image[(i * dim + j) * 4 + 1] = final_image[(i * dim + j) * 4 + 1] ;
-            image[(i * dim + j) * 4 + 2] = final_image[(i * dim + j) * 4 + 0] ;
-        }
-    }
-
-    generateBitmapImage((unsigned char*) image, height, width, imageFileName);
-    //printf("Image generated!!");
-
-    //generateLog(elapsed_time, dim, sph, iteration);
-
-    free(image);
     free(temp_s);
     free(final_image);
-*/
+
 
 }
