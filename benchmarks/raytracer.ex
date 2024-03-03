@@ -1,3 +1,5 @@
+Mix.install([{:random, "~> 0.2.4"}])
+
 import Bitwise
 
 Random.seed(313)
