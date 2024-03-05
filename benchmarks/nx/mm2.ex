@@ -20,7 +20,7 @@ IO.inspect mat1
 
 started = System.monotonic_time()
 
-NxBenchmark.MM.mm(mat1, mat2)
+_r = NxBenchmark.MM.mm(mat1, mat2)
 
 finished = System.monotonic_time()
 
