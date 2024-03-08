@@ -1,9 +1,26 @@
-Mix.install([{:exla, "~> 0.7.1"}])
+#Mix.install([{:exla, "~> 0.7.1"}])
 
 Nx.global_default_backend(EXLA.Backend)
 
 defmodule NBodies do
   import Nx.Defn
+  defn integrate(p,dt) do
+    case Nx.shape(p) do
+      {6} -> :ok
+      _ -> raise "invalid shape"
+    end
+    x = p[0]
+    y = p[1]
+    z = p[2]
+    vx = p[3]
+    vy = p[4]
+    vz = p[5]
+
+  x = x + vx * dt
+  y = y + vy * dt
+  z = z + vz * dt
+  Nx.stack([x,y,z,vx,vy,vz])
+  end
   defn nbodies(p,p_copy,dt,softening) do
 
       case Nx.shape(p) do
@@ -46,7 +63,7 @@ defmodule NBodies do
       dz = jz - z
 
       distSqr = dx*dx + dy*dy + dz*dz + softening;
-      raise "#{inspect_value(distSqr)}"
+      #raise "#{inspect_value(distSqr)}"
       invDist = 1/Nx.sqrt(distSqr);
       invDist3 = invDist * invDist * invDist;
 
@@ -81,24 +98,46 @@ defmodule NBodies do
   end
 end
 
+[arg] = System.argv()
+
+size_matrex = String.to_integer(arg)
+
 softening = 0.000000001;
 dt = 0.01; # time step
 
-t = Nx.tensor([[1,2,3,4,5,6],[1,2,3,4,5,6],[1,2,3,4,5,6]], type: :f32)
+#size_matrex = 2000
 
-t2 = Nx.vectorize(t, :coords)
+h_buf = Matrex.random(size_matrex,6)
 
-IO.inspect t2
+#IO.inspect h_buf
+h_buf =Matrex.to_list_of_lists(h_buf)
 
-#r = NBodies.nbodies(t2,t, dt, softening)
+#IO.inspect h_buf
+
+tensor = Nx.tensor(h_buf, type: :f32)
+
+#t = Nx.tensor([[1,2,3,4,5,6],[1,2,3,4,5,6],[1,2,3,4,5,6]], type: :f32)
+
+#t2 = Nx.vectorize(t, :coords)
+
+#IO.inspect tensor
+
+t2 =  Nx.vectorize(tensor, :coords)
+prev = System.monotonic_time()
+r = NBodies.nbodies(t2,tensor, dt, softening)
+r=NBodies.integrate(r,dt)
+next = System.monotonic_time()
+IO.puts "Nx\t#{size_matrex}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
+
+#IO.inspect r
 
 #r = NBodies.teste1(t2)
 
-r = NBodies.teste2(t,Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32))
+#r = NBodies.teste2(t,Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32))
 
 #r = NBodies.calc_nbodies(t,softening,Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32),Nx.tensor(0,type: :f32))
 
 
-IO.inspect r
+#IO.inspect r
 
 #NBodies.nbodies(t2,t,dt,softening)
