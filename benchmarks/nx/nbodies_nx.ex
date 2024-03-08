@@ -50,7 +50,7 @@ defmodule NBodies do
   defn calc_nbodies(p,softening,x,y,z,fx,fy,fz) do
 
 
-    {softening,x,y,z,fx,fy,fz}=while {softening,x,y,z,fx,fy,fz}, i <- p do
+    {_softening,_x,_y,_z,fx,fy,fz}=while {softening,x,y,z,fx,fy,fz}, i <- p do
       case Nx.shape(i) do
         {6} -> :ok
         _ -> raise "invalid shape"
@@ -74,28 +74,28 @@ defmodule NBodies do
     end
     {fx,fy,fz}
   end
-  defn teste1(p) do
-    case Nx.shape(p) do
-      {6} -> :ok
-      _ -> raise "invalid shape"
-    end
-    x = p[0]
-    y = p[1]
-    z = p[2]
-    vx = p[3]
-    vy = p[4]
-    vz = p[5]
-    Nx.stack([x,y])
-  end
-  defn teste2(p,x,y,z,fx,fy,fz) do
-    while {x,y,z,fx,fy,fz}, i <- p do
-      fx1 = i[0]
-      fy1 = i[1]
-      fz1 = i[2]
+ # defn teste1(p) do
+ #   case Nx.shape(p) do
+ #     {6} -> :ok
+ #     _ -> raise "invalid shape"
+ #   end
+ #   x = p[0]
+ #   y = p[1]
+ #   z = p[2]
+ #   vx = p[3]
+ #   vy = p[4]
+ #   vz = p[5]
+ #   Nx.stack([x,y])
+ # end
+ # defn teste2(p,x,y,z,fx,fy,fz) do
+ #   while {x,y,z,fx,fy,fz}, i <- p do
+ #     fx1 = i[0]
+ #     fy1 = i[1]
+ #     fz1 = i[2]
 
-    {x,y,z,fx1+fx,fy1+fy,fz1+fz}
-    end
-  end
+ #   {x,y,z,fx1+fx,fy1+fy,fz1+fz}
+  #  end
+  #end
 end
 
 [arg] = System.argv()
@@ -125,7 +125,7 @@ tensor = Nx.tensor(h_buf, type: :f32)
 t2 =  Nx.vectorize(tensor, :coords)
 prev = System.monotonic_time()
 r = NBodies.nbodies(t2,tensor, dt, softening)
-r=NBodies.integrate(r,dt)
+_r=NBodies.integrate(r,dt)
 next = System.monotonic_time()
 IO.puts "Nx\t#{size_matrex}\t#{System.convert_time_unit(next-prev,:native,:millisecond)}"
 
