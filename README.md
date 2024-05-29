@@ -7,7 +7,7 @@
 * Install Erlang, Elixir and nvcc
 * Install erlang-dev
 * cd gpotion
-* cd **make clean**
+* type: **make clean**
 * type: **make**
 * Some benchmarks also need: **make bmp**
 * type: **mix deps.get**
