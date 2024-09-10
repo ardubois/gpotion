@@ -201,7 +201,7 @@ defmodule GPotion do
     end
 end
 
-defmacro gpdef(header, do: body) do
+defmacro defgp(header, do: body) do
   {fname, comp_info, para} = header
 
   caller_st = __CALLER__

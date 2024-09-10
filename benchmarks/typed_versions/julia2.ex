@@ -14,7 +14,7 @@ end
 defmodule Julia do
   import GPotion
 gptype julia integer ~> integer ~> integer ~> integer
-gpdef  julia(x,y,dim) do
+defgp  julia(x,y,dim) do
   var scale float = 0.1
   var jx float = scale * (dim - x)/dim
   var jy float = scale * (dim - y)/dim

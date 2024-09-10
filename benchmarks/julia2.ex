@@ -13,7 +13,7 @@ end
 
 defmodule Julia do
   import GPotion
-gpdef julia(x,y,dim) do
+defgp julia(x,y,dim) do
   scale = 0.1
   jx = scale * (dim - x)/dim
   jy = scale * (dim - y)/dim
