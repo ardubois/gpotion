@@ -315,7 +315,7 @@ def new_gmatrex({array,{l,c}}) do
 end
 
 def new_gmatrex(r,c) do
-  ref=new_ref_nif(c)
+  ref=new_ref_nif(r*c)
   {ref, {r,c}}
   end
 
